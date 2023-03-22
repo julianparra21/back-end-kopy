@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { getRegistro,postRegistro,LoginPost, LoginGet,RecuperarGet, RecuperarPost } from '../controllers/registro.controller.js'
+import { getRegistro,postRegistro,LoginPost, LoginGet,RecuperarGet, RecuperarPost,Verificar } from '../controllers/registro.controller.js'
 const router = Router();
 
 router.get("/registro", getRegistro);
@@ -13,5 +13,8 @@ router.post("/login", LoginPost);
 router.get("/recuperar", RecuperarGet)
 
 router.post("/recuperar", RecuperarPost)
+
+router.post('/verificar:Token', Verificar)
+
 
 export default router;
