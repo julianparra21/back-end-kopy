@@ -1,11 +1,6 @@
 import { pool } from "../db.js";
 import nodemailer from "nodemailer";
-import {
-    USER_EMAIL,
-    PASS_EMAIL,
-    HOST_EMAIL,
-    PORT_EMAIL,
-} from "../config.js";
+
 
 
 export const getRegistro = (req, res) => {
@@ -25,12 +20,12 @@ export const postRegistro = async (req, res) => {
             }
         )
         const transporter = nodemailer.createTransport({
-            host: HOST_EMAIL,
-            port: PORT_EMAIL,
+            host: "smtp.gmail.com",
+            port: 587,
             auth: {
-                user: USER_EMAIL,
-                pass: PASS_EMAIL
-            },
+              user: "kopycrazy@gmail.com",
+              pass: "rcyxbrlzopvcmaks",
+            }
             
         });
 
