@@ -19,33 +19,31 @@ export const postRegistro = async (req, res) => {
                 password
             }
         )
-        const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
+        const transporter= nodemailer.createTransport({
+            host: "smtp.gmail.com",
             port: 587,
             auth: {
                 user: 'kopycrazy@gmail.com',
-                pass: rcyxbrlzopvcmaks
+                pass: 'rcyxbrlzopvcmaks'
             },
-        });
-        transporter;
-
-        transporter.sendMail({
-            from: 'smtp.gmail.com',
-            to: email,
-            subject: 'Registro exitoso',
-            html: '<h1>SU REGISTRO FUE EXITOSO</h1><img src="https://res.cloudinary.com/dfgp6rfmc/image/upload/v1666142034/kopy/logo_uf0miv.png"><p><b>' + nombre + '</b> ,El presente correo es para informar que ha sido registrado(a) correctamente en nuestro aplicativo web <b>Kopy  crazy fruit</b> Esperamos que nuestra aplicación sea de su agrado y disfrute de todas las herramientas brindadas en nuestro aplicativo web</p>',
-        }).then((res) => {
-            console.log(res);
-        }).catch((err) => {
-            console.log(err);
+            
         });
 
+        const emailResult = await transporter.sendMail({
+            from: 'kopycrazy@gmail.com'
+            , to: email
+            , subject: 'Registro exitoso'
+            , html: '<h1>Registro exitoso</h1><p>Gracias por registrarte en <b>Kopy crazy fruit</b></p>'
+        });
+        console.log(emailResult);
+
+        
 
 
 
     } catch (error) {
         return res.status(500).json({
-            message: "Error al crear el usuario", error:error
+            message: "Error al crear el usuario", 
         })
     }
 
@@ -85,7 +83,7 @@ export const RecuperarPost = async (req, res) => {
         const [rows] = await pool.query(`SELECT email FROM registro WHERE email = ?`, [email]);
         let tokenEmail = Math.floor(Math.random() * 100000);
         const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
+            host: "smtp.gmail.com",
             port: 587,
             auth: {
                 user: 'kopycrazy@gmail.com',
@@ -148,7 +146,7 @@ export const postRegistroAdmin = async (req, res) => {
             }
         )
         const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
+            host: "smtp.gmail.com",
             port: 587,
             auth: {
                 user: 'kopycrazy@gmail.com',
