@@ -1,6 +1,11 @@
 import { pool } from "../db.js";
 import nodemailer from "nodemailer";
-
+import {
+    USER_EMAIL,
+    PASS_EMAIL,
+    HOST_EMAIL,
+    PORT_EMAIL,
+} from "../config.js";
 
 
 export const getRegistro = (req, res) => {
@@ -19,25 +24,27 @@ export const postRegistro = async (req, res) => {
                 password
             }
         )
-        const transporter= nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            port: 587,
+        const transporter = nodemailer.createTransport({
+            host: HOST_EMAIL,
+            port: PORT_EMAIL,
             auth: {
-                user: 'kopycrazy@gmail.com',
-                pass: 'rcyxbrlzopvcmaks'
+                user: USER_EMAIL,
+                pass: PASS_EMAIL
             },
             
         });
 
-        const emailResult = await transporter.sendMail({
-            from: 'kopycrazy@gmail.com'
-            , to: email
-            , subject: 'Registro exitoso'
-            , html: '<h1>Registro exitoso</h1><p>Gracias por registrarte en <b>Kopy crazy fruit</b></p>'
+        transporter.sendMail({
+            from: 'kopycrazy@gmail.com',
+            to: email,
+            subject: 'Registro exitoso',
+            html: '<h1>SU REGISTRO FUE EXITOSO</h1><img src="https://res.cloudinary.com/dfgp6rfmc/image/upload/v1666142034/kopy/logo_uf0miv.png"><p><b>' + nombre + '</b> ,El presente correo es para informar que ha sido registrado(a) correctamente en nuestro aplicativo web <b>Kopy  crazy fruit</b> Esperamos que nuestra aplicación sea de su agrado y disfrute de todas las herramientas brindadas en nuestro aplicativo web</p>',
+        }).then((res) => {
+            console.log(res);
+        }).catch((err) => {
+            console.log(err);
         });
-        console.log(emailResult);
 
-        
 
 
 
@@ -86,13 +93,13 @@ export const RecuperarPost = async (req, res) => {
             host: "smtp.gmail.com",
             port: 587,
             auth: {
-                user: 'kopycrazy@gmail.com',
-                pass: 'rcyxbrlzopvcmaks'
+                user: USER_EMAIL,
+                pass: PASS_EMAIL
             },
 
         });
 
-        const [rows2] = await pool.query(`UPDATE registro SET token = ? WHERE email = ?`, [tokenEmail, email]);
+        const [rows2]= await pool.query(`UPDATE registro SET token = ? WHERE email = ?`, [tokenEmail, email]);
 
         const emailResult = await transporter.sendMail({
             from: 'kopycrazy@gmail.com',
@@ -116,8 +123,10 @@ export const Verificar = async (req, res) => {
         if (rows.length > 0) {
             const [rows2] = await pool.query(`UPDATE registro SET password = ? WHERE token = ?`, [password, token]);
             res.status(200).json({ message: "Contraseña actualizada" });
-        }
+            
 
+        } 
+        
         else {
             res.status(401).json({ message: "Codigo incorrecto" });
         }
@@ -126,7 +135,7 @@ export const Verificar = async (req, res) => {
             message: "Error al verificar el codigo",
         })
     }
-
+    
 }
 
 export const getRegistroAdmin = (req, res) => {
@@ -146,11 +155,11 @@ export const postRegistroAdmin = async (req, res) => {
             }
         )
         const transporter = nodemailer.createTransport({
-            host: "smtp.gmail.com",
-            port: 587,
+            host: HOST_EMAIL,
+            port: PORT_EMAIL,
             auth: {
-                user: 'kopycrazy@gmail.com',
-                pass: 'rcyxbrlzopvcmaks'
+                user: USER_EMAIL,
+                pass: PASS_EMAIL
             },
         });
         transporter;
