@@ -3,6 +3,7 @@ import { getRegistro,postRegistro,registroAdminGet, registroAdminPost} from '../
 import { LoginGet, LoginPost,LoginAdminGet,LoginAdminPost } from '../controllers/login.controller.js'
 import { RecuperarAdminGet,RecuperarGet,RecuperarPost,VerificarAdmin,Verificar,RecuperarAdminPost } from '../controllers/recuperar.controller.js'
 import { IngresoProductoGet, IngresoProductoPost,EliminarProductoGet,EliminarProductoPost, ActualizarProductoGet,ActualizarProductoPost} from '../controllers/producto.controller.js'
+import { addProductsGet,addProductsPost } from '../controllers/cart.controller.js'
 const router = Router();
 
 router.get("/registro", getRegistro);
@@ -44,5 +45,10 @@ router.post("/eliminarProducto", EliminarProductoPost);
 router.get("/actualizarProducto", ActualizarProductoGet);
 
 router.post("/actualizarProducto", ActualizarProductoPost);
+
+router.get("/addProductsCart", addProductsGet);
+
+router.post("/addProductsCart", addProductsPost);
+
 
 export default router;

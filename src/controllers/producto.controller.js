@@ -53,6 +53,8 @@ export const ActualizarProductoPost = async (req, res) => {
     try {
         const [rows] = await pool.query(`UPDATE productos SET nameProduct=?, priceProduct=?, descriptionProduct=?, imageProduct=? WHERE id=?`, [nombre,precio,descripcion,imagen,id]);
         res.status(200).json({ message: 'Producto actualizado correctamente' });
+
+        
         
 
     } catch (error) {
@@ -62,4 +64,6 @@ export const ActualizarProductoPost = async (req, res) => {
 }
 
 
+//carrito de compras
+ 
 
