@@ -18,6 +18,7 @@ export const postRegistro = async (req, res) => {
                 email,
                 password
             }
+            
         )
         const transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
@@ -40,10 +41,13 @@ export const postRegistro = async (req, res) => {
             console.log(err);
         });
 
+        console.log("se envia el correo");
+
 
 
 
     } catch (error) {
+        console.log("no se envia el correo");
         return res.status(500).json({
             message: "Error al crear el usuario",
         })
