@@ -6,12 +6,15 @@ export const LoginGet = (req, res) => {
 
 export const LoginPost = async (req, res) => {
     try {
+       
+        
         const { email, password } = req.body;
         const [rows] = await pool.query('SELECT * FROM registro WHERE email = ? AND password = ?', [email, password]);
 
         if (rows.length > 0) {
             // Usuario encontrado en la base de datos, se inicia sesión
             res.send("Bienvenido al sitio");
+           
         } else {
             // Usuario no encontrado en la base de datos
             res.status(401).json({ message: "Credenciales inválidas" });

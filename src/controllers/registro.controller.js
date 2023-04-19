@@ -11,15 +11,9 @@ export const postRegistro = async (req, res) => {
     try {
         const { nombre, apellido, email, password } = req.body
         const [rows] = await pool.query('INSERT INTO registro (nombre,apellido,email,password) VALUES (?,?,?,?)', [nombre, apellido, email, password])
-        res.send(
-            {
-                nombre,
-                apellido,
-                email,
-                password
-            }
-            
-        )
+        res.render("Login.jsx")
+
+        
         const transporter = nodemailer.createTransport({
             host: "smtp.gmail.com",
             port: 587,
