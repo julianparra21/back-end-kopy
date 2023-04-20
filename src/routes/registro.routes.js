@@ -3,12 +3,32 @@ import { getRegistro,postRegistro,registroAdminGet, registroAdminPost} from '../
 import { LoginGet, LoginPost,LoginAdminGet,LoginAdminPost } from '../controllers/login.controller.js'
 import { RecuperarAdminGet,RecuperarGet,RecuperarPost,VerificarAdmin,Verificar,RecuperarAdminPost } from '../controllers/recuperar.controller.js'
 import { IngresoProductoGet, IngresoProductoPost,EliminarProductoGet,EliminarProductoPost, ActualizarProductoGet,ActualizarProductoPost} from '../controllers/producto.controller.js'
+import {LoginDomiciliario,GetLoginDomiciliario } from '../controllers/login.controller.js'
+import { Registrodomiciliario,GetRegistrodomiciliario } from '../controllers/registro.controller.js'
 import { addProductsGet,addProductsPost } from '../controllers/cart.controller.js'
+import { getEliminarDomiciliario, postEliminarDomiciliario } from '../controllers/deleteDomiciliario.js'
+import { updateDomiciliariop,updateDomiciliario } from '../EdidDomiciliario.js'
 const router = Router();
 
 router.get("/registro", getRegistro);
 
 router.post("/registro", postRegistro );
+
+router.post("/registroDomiciliario", Registrodomiciliario );
+
+router.post("/loginDomiciliario", LoginDomiciliario);
+
+router.get("/GetRegistroDomiciliario", GetRegistrodomiciliario);
+
+router.get("/GetLoginDomiciliario", GetLoginDomiciliario);
+
+router.post("/postEliminarDomiciliario", postEliminarDomiciliario);
+
+router.get("/getEliminarDomiciliario", getEliminarDomiciliario);
+
+router.post("/updateDomiciliariop",updateDomiciliariop);
+
+router.get("/updateDomiciliario",updateDomiciliario);
 
 router.get("/login", LoginGet);
 

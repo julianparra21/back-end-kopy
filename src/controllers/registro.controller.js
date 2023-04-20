@@ -48,6 +48,57 @@ export const postRegistro = async (req, res) => {
     }
 
 }
+//REGISTRO DOMICILIARIO
+export const Registrodomiciliario = async (req, res) => {
+    try {
+        const { nombre, apellido, email, password,id,telefono,identificacion } = req.body
+        const [rows] = await pool.query('INSERT INTO domiciliario (nombre,apellido,email,password,id,telefono,identificacion) VALUES (?,?,?,?,?,?,?)',
+         [nombre,
+          apellido,
+          email,
+          password,
+          id_domiciliario,
+          telefono,
+          identificacion])
+        res.render("LoginDomiciliario.jsx")
+        res.send("Hola domiciliario")
+
+        
+        const transporter = nodemailer.createTransport({
+            host: "smtp.gmail.com",
+            port: 587,
+            auth: {
+                user: "kopycrazy@gmail.com",
+                pass: "rcyxbrlzopvcmaks",
+            }
+
+        });
+
+        transporter.sendMail({
+            from: 'kopycrazy@gmail.com',
+            to: email,
+            subject: 'Registro exitoso',
+            html: '<h1>SU REGISTRO FUE EXITOSO</h1><img src="https://res.cloudinary.com/dfgp6rfmc/image/upload/v1666142034/kopy/logo_uf0miv.png"><p><b>' + nombre + '</b> ,El presente correo es para informar que ha sido registrado(a) correctamente en nuestro aplicativo web <b>Kopy  crazy fruit</b> Esperamos que nuestra aplicación sea de su agrado y disfrute de todas las herramientas brindadas en nuestro aplicativo web</p>',
+        }).then((res) => {
+            console.log(res);
+        }).catch((err) => {
+            console.log(err);
+        });
+
+        console.log("se envia el correo");
+
+    } catch (error) {
+        console.log("no se envia el correo");
+        return res.status(500).json({
+            message: "Error al crear el usuario",
+        })
+    }
+
+}
+
+export const GetRegistrodomiciliario = (req, res) => {
+    res.send("Registro de Domiciliarios")
+}
 
 
 
