@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import { getRegistro,postRegistro,registroAdminGet, registroAdminPost} from '../controllers/registro.controller.js'
 import { LoginGet, LoginPost,LoginAdminGet,LoginAdminPost } from '../controllers/login.controller.js'
-import { RecuperarAdminGet,RecuperarGet,RecuperarPost,VerificarAdmin,Verificar,RecuperarAdminPost } from '../controllers/recuperar.controller.js'
+import { RecuperarAdminGet,RecuperarGet,RecuperarPost,VerificarAdmin,Verificar,RecuperarAdminPost,RecuperarDomiciliarioGet,RecuperarDomiciliarioPost } from '../controllers/recuperar.controller.js'
 import { IngresoProductoGet, IngresoProductoPost,EliminarProductoGet,EliminarProductoPost, ActualizarProductoGet,ActualizarProductoPost} from '../controllers/producto.controller.js'
 import {LoginDomiciliario,GetLoginDomiciliario } from '../controllers/login.controller.js'
 import { Registrodomiciliario,GetRegistrodomiciliario } from '../controllers/registro.controller.js'
@@ -69,6 +69,10 @@ router.post("/actualizarProducto", ActualizarProductoPost);
 router.get("/addProductsCart", addProductsGet);
 
 router.post("/addProductsCart", addProductsPost);
+
+
+router.get('/recuperarDomiciliario', RecuperarDomiciliarioGet),
+router.post('/recuperarDomiciliario', RecuperarDomiciliarioPost)
 
 
 export default router;
