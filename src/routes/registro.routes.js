@@ -7,13 +7,30 @@ import {LoginDomiciliario,GetLoginDomiciliario } from '../controllers/login.cont
 import { Registrodomiciliario,GetRegistrodomiciliario } from '../controllers/registro.controller.js'
 import { addProductsGet,addProductsPost } from '../controllers/cart.controller.js'
 import { getEliminarDomiciliario, postEliminarDomiciliario } from '../controllers/deleteDomiciliario.js'
-import { updateDomiciliariop,updateDomiciliario } from '../EdidDomiciliario.js'
-const router = Router();
+import { updateAdminGet, updateAdminPost, updateDomiciliarioGet,updateDomiciliarioPost, updateUsuarioGet, updateUsuarioPost, } from '../controllers/update.controller.js'
 
+const router = Router();
+//crud usuario
 router.get("/registro", getRegistro);
 
 router.post("/registro", postRegistro );
 
+router.get("/login", LoginGet);
+
+router.post("/login", LoginPost);
+
+router.get("/recuperar", RecuperarGet)
+
+router.post("/recuperar", RecuperarPost)
+
+router.post('/verificar:Token', Verificar)
+
+router.get('/UpdateUsuario', updateUsuarioGet)
+
+router.post('/UpdateUsuario', updateUsuarioPost)
+
+
+//crud domiliario
 router.post("/registroDomiciliario", Registrodomiciliario );
 
 router.post("/loginDomiciliario", LoginDomiciliario);
@@ -26,20 +43,16 @@ router.post("/postEliminarDomiciliario", postEliminarDomiciliario);
 
 router.get("/getEliminarDomiciliario", getEliminarDomiciliario);
 
-router.post("/updateDomiciliariop",updateDomiciliariop);
+router.post("/updateDomiciliario",updateDomiciliarioPost);
 
-router.get("/updateDomiciliario",updateDomiciliario);
+router.get("/updateDomiciliario",updateDomiciliarioGet);
 
-router.get("/login", LoginGet);
+router.get('/recuperarDomiciliario', RecuperarDomiciliarioGet),
 
-router.post("/login", LoginPost);
+router.post('/recuperarDomiciliario', RecuperarDomiciliarioPost)
 
-router.get("/recuperar", RecuperarGet)
 
-router.post("/recuperar", RecuperarPost)
-
-router.post('/verificar:Token', Verificar)
-
+//crud admin
 router.get('/registroAdmin', registroAdminGet)
 
 router.post('/registroAdmin', registroAdminPost)
@@ -54,6 +67,13 @@ router.post('/recuperarAdmin', RecuperarAdminPost)
 
 router.post('/verificarAdmin:Token', VerificarAdmin)
 
+router.get('/UpdateAdmin', updateAdminGet)
+
+router.post('/UpdateAdmin', updateAdminPost)
+
+
+
+//crud producto
 router.get("/ingresoProducto", IngresoProductoGet);
 
 router.post("/ingresoProducto", IngresoProductoPost);
@@ -66,13 +86,15 @@ router.get("/actualizarProducto", ActualizarProductoGet);
 
 router.post("/actualizarProducto", ActualizarProductoPost);
 
+
+
+//carrito de compras
 router.get("/addProductsCart", addProductsGet);
 
 router.post("/addProductsCart", addProductsPost);
 
 
-router.get('/recuperarDomiciliario', RecuperarDomiciliarioGet),
-router.post('/recuperarDomiciliario', RecuperarDomiciliarioPost)
+
 
 
 export default router;
