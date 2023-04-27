@@ -54,14 +54,16 @@ export const getRegistro = (req, res) => {
 
 export const postRegistro = async (req, res) => {
     try {
-        const { nombre, apellido, email, password } = req.body
+        const { nombre, apellido,telefono,direccion, email, password } = req.body
         console.log(nombre);
-        const [rows] = await pool.query('INSERT INTO registro (nombre,apellido,email,password) VALUES (?,?,?,?)', [nombre, apellido, email, password])
+        const [rows] = await pool.query('INSERT INTO cliente (nombre_cliente,apellido_cliente,telefono_cliente,direccion_cliente,email_cliente,password_cliente) VALUES (?,?,?,?,?,?)', [nombre, apellido,telefono,direccion, email, password])
         
         res.send(
             {
                 nombre,
                 apellido,
+                telefono,
+                direccion,  
                 email,
                 password,
                 
@@ -95,23 +97,25 @@ export const postRegistro = async (req, res) => {
 
 export const Registrodomiciliario = async (req, res) => {
     try {
-        const { nombre, apellido, email, password,id,telefono,identificacion } = req.body
-        const [rows] = await pool.query('INSERT INTO domiciliario (nombre,apellido,email,password,id,telefono,identificacion) VALUES (?,?,?,?,?,?,?)',
-         [nombre,
-          apellido,
-          email,
-          password,
-          id_domiciliario,
-          telefono,
-          identificacion])
+        const { nombre, apellido, telefono,email, password } = req.body
+        const [rows] = await pool.query('INSERT into domiciliario (nombre_dom,apellido_dom,telefono_dom,correo_dom,contraseña_dom) VALUES (?,?,?,?,?)', [nombre, apellido, telefono,email, password])
         
+        res.send(
+            {
+                nombre,
+                apellido,
+                telefono, 
+                email,
+                password,
+                
+            }
+            
+        )
+            
+
           await sendEmails(email,2,nombre);
       
-
-        
-       
-
-        console.log("se envia el correo");
+    
 
     } catch (error) {
         console.log("no se envia el correo");
@@ -140,7 +144,7 @@ export const registroAdminGet = (req, res) => {
 export const registroAdminPost = async (req, res) => {
     try {
         const { nombre, apellido, email, password } = req.body
-        const [rows] = await pool.query('INSERT INTO admin (nombre,apellido,email,password) VALUES (?,?,?,?)', [nombre, apellido, email, password])
+        const [rows] = await pool.query('INSERT INTO administrador (nombre_admin,apellido_admin,email_admin,contraseña_admin) VALUES (?,?,?,?)', [nombre, apellido, email, password])
         res.send(
             {
                 nombre,

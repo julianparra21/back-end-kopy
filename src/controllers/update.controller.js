@@ -1,4 +1,4 @@
-import pool from '../db.js';
+
 
 
 //update domiliario

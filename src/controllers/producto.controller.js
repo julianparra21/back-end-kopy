@@ -10,7 +10,7 @@ export const IngresoProductoPost = async (req, res) => {
     const {nombre,precio,descripcion,imagen}=req.body;
 
     try {
-        const [rows] = await pool.query(`INSERT INTO productos (nameProduct,priceProduct,descriptionProduct,imageProduct) VALUES (?,?,?,?)`, [nombre,precio,descripcion,imagen]);
+        const [rows] = await pool.query(`INSERT INTO producto (nombre_producto,descripcion_producto,precio,id_imagen,url_imagen) VALUES (?,?,?,?,?)`, [nombre,precio,descripcion,imagen]);
         res.status(200).json({ message: 'Producto ingresado correctamente' });
         
 
@@ -32,7 +32,7 @@ export const EliminarProductoPost = async (req, res) => {
     const {id}=req.body;
 
     try {
-        const [rows] = await pool.query(`DELETE FROM productos WHERE id = ?`, [id]);
+        const [rows] = await pool.query(`DELETE FROM producto WHERE id_producto = ?`, [id]);
         res.status(200).json({ message: 'Producto eliminado correctamente' });
         
 
@@ -51,7 +51,7 @@ export const ActualizarProductoPost = async (req, res) => {
     const {id,nombre,precio,descripcion,imagen}=req.body;
 
     try {
-        const [rows] = await pool.query(`UPDATE productos SET nameProduct=?, priceProduct=?, descriptionProduct=?, imageProduct=? WHERE id=?`, [nombre,precio,descripcion,imagen,id]);
+        const [rows] = await pool.query(`UPDATE productos SET nombre_producto=?, precio=?, descripcion_producto=? WHERE id=?`, [nombre,precio,descripcion,id]);
         res.status(200).json({ message: 'Producto actualizado correctamente' });
 
         

@@ -4,7 +4,7 @@ export const pool = createPool({
     host: 'localhost',
     user: 'root',
     password: '',
-    database: 'proyect',
+    database: 'kopy',
     port: 3306, 
 
 
