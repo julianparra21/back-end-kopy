@@ -1,5 +1,5 @@
 import { pool } from "../db.js";
-import nodemailer from "nodemailer";
+
 import { sendEmails } from "./helpers/nodemailer.js";
 
 export const RecuperarGet = (req, res) => {
@@ -42,7 +42,7 @@ export const Verificar = async (req, res) => {
         }
 
         else {
-            res.status(401).json({ message: "Codigo incorrecto" });
+            res.status(401).json({ message: "Codigo error" });
         }
     } catch (error) {
         return res.status(500).json({
@@ -74,31 +74,58 @@ export const RecuperarAdminPost = async (req, res) => {
     }
 };
 
+// export const VerificarAdmin = async (req, res) => {
+//    const token= req.body.token;
+//     const password = req.body.password;
+
+//     try {
+//         const [rows] = await pool.query(`SELECT token_admin FROM administrador WHERE token_admin = ?`, [token]);
+//         if (rows.length > 0) {
+//             const [rows2] = await pool.query(`UPDATE administrador SET contraseña_admin = ? WHERE token_admin = ?`, [password, token]);
+//             res.status(200).json({ message: "Contraseña actualizada" });
+
+//             const { email } = req.body;
+//             const [rows] = await pool.query('SELECT * FROM administrador WHERE email_admin = ?', [email]);
+
+//         }
+
+//         else {
+//             res.status(401).json({ message: "Codigo incorrecto" });
+//         }
+//     } catch (error) {
+//         return res.status(500).json({
+//             message: "Error al verificar el codigo",
+//         })
+//     }
+
+// }
+
 export const VerificarAdmin = async (req, res) => {
-   const tokenAd= req.body.tokenAd;
-    const password = req.body.password;
-
+    const token = req.body.token_admin;
+  
+    const password = req.body.contraseña_admin;
+  
     try {
-        const [rows] = await pool.query(`SELECT token_admin FROM administrador WHERE token_admin = ?`, [tokenAd]);
-        if (rows.length > 0) {
-            const [rows2] = await pool.query(`UPDATE administrador SET contraseña_admin = ? WHERE token_admin = ?`, [password, tokenAd]);
-            res.status(200).json({ message: "Contraseña actualizada" });
+     const [rows] = await pool.query(`SELECT token_admin FROM administrador WHERE token_admin = ?`, [token]);
 
-            const { email } = req.body;
-            const [rows] = await pool.query('SELECT * FROM administrador WHERE email_admin = ?', [email]);
-
-        }
-
-        else {
-            res.status(401).json({ message: "Codigo incorrecto" });
-        }
+      if (rows.length > 0) {
+        const [updateResult] = await pool.query(`UPDATE administrador SET contraseña_admin = ? WHERE token_admin = ?`, [password, token]);
+  
+        res.status(200).json({ message: "Contraseña actualizada" });
+  
+        // Usa los datos de la consulta aquí
+  
+      } else {
+        res.status(401).json({ message: "Código invalido" });
+      }
     } catch (error) {
-        return res.status(500).json({
-            message: "Error al verificar el codigo",
-        })
+      return res.status(500).json({
+        message: "Error al verificar el código",
+        error: error
+      });
     }
-
-}
+  };
+  
 
 //recuperar contraseña domiciliario
 export const RecuperarDomiciliarioGet = (req, res) => {
@@ -113,8 +140,12 @@ export const RecuperarDomiciliarioPost = async (req, res) => {
         let tokenEmails = Math.floor(Math.random() * 100000);
 
         await sendEmails(email, tokenEmails, 6, tokenEmails);
+            
+        res.status(200).json({ message: 'Correo enviado correctamente' });
 
         const [rows2] = await pool.query(`UPDATE domiciliario SET token_dom = ? WHERE correo_dom = ?`, [tokenEmails, email]);
+
+
 
     } catch (error) {
         console.log(error);
@@ -127,13 +158,13 @@ export const RecuperarDomiciliarioPost = async (req, res) => {
 
 
 export const VerificarDomiciliario = async (req, res) => {
-    const token = req.body.token;
-    const password = req.body.password;
+    const tokenD = req.body.token;
+    const contraseña = req.body.password;
 
     try {
-        const [rows] = await pool.query(`SELECT token_dom FROM domiciliario WHERE token_dom = ?`, [token]);
+        const [rows] = await pool.query(`SELECT token_dom FROM domiciliario WHERE token_dom = ?`, [tokenD]);
         if (rows.length > 0) {
-            const [rows2] = await pool.query(`UPDATE domiciliario SET contraseña_dom = ? WHERE token_dom = ?`, [password, token]);
+            const [rows2] = await pool.query(`UPDATE domiciliario SET contraseña_dom = ? WHERE token_dom = ?`, [contraseña, tokenD]);
             res.status(200).json({ message: "Contraseña actualizada" });
 
             const { email } = req.body;
@@ -142,7 +173,7 @@ export const VerificarDomiciliario = async (req, res) => {
         }
 
         else {
-            res.status(401).json({ message: "Codigo incorrecto" });
+            res.status(401).json({ message: "Codigo invalido" });
         }
     } catch (error) {
         return res.status(500).json({

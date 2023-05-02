@@ -1,13 +1,15 @@
 import { Router } from 'express'
 import { getRegistro,postRegistro,registroAdminGet, registroAdminPost} from '../controllers/registro.controller.js'
 import { LoginGet, LoginPost,LoginAdminGet,LoginAdminPost } from '../controllers/login.controller.js'
-import { RecuperarAdminGet,RecuperarGet,RecuperarPost,VerificarAdmin,Verificar,RecuperarAdminPost,RecuperarDomiciliarioGet,RecuperarDomiciliarioPost } from '../controllers/recuperar.controller.js'
+import { RecuperarAdminGet,RecuperarGet,RecuperarPost,VerificarAdmin,Verificar,RecuperarAdminPost,RecuperarDomiciliarioGet,RecuperarDomiciliarioPost,VerificarDomiciliario } from '../controllers/recuperar.controller.js'
 import { IngresoProductoGet, IngresoProductoPost,EliminarProductoGet,EliminarProductoPost, ActualizarProductoGet,ActualizarProductoPost} from '../controllers/producto.controller.js'
 import {LoginDomiciliario,GetLoginDomiciliario } from '../controllers/login.controller.js'
 import { Registrodomiciliario,GetRegistrodomiciliario } from '../controllers/registro.controller.js'
 import { addProductsGet,addProductsPost } from '../controllers/cart.controller.js'
 import { getEliminarDomiciliario, postEliminarDomiciliario } from '../controllers/deleteDomiciliario.js'
 import { updateAdminGet, updateAdminPost, updateDomiciliarioGet,updateDomiciliarioPost, updateUsuarioGet, updateUsuarioPost, } from '../controllers/update.controller.js'
+
+import { VerificarAdmin2,RecuperarAdminPost2 } from '../controllers/recuperar.adDom.js'
 
 const router = Router();
 //crud usuario
@@ -31,7 +33,7 @@ router.post('/UpdateUsuario', updateUsuarioPost)
 
 
 //crud domiliario
-router.post("/registroDomiciliario", Registrodomiciliario );
+router.post("/registroDom", Registrodomiciliario );
 
 router.post("/loginDomiciliario", LoginDomiciliario);
 
@@ -49,7 +51,12 @@ router.get("/updateDomiciliario",updateDomiciliarioGet);
 
 router.get('/recuperarDomiciliario', RecuperarDomiciliarioGet),
 
-router.post('/recuperarDomiciliario', RecuperarDomiciliarioPost)
+router.post('/recuperarDom', RecuperarDomiciliarioPost)
+
+router.post('/verificarDom',VerificarDomiciliario)
+
+
+
 
 
 //crud admin
@@ -63,9 +70,9 @@ router.post('/loginAdmin', LoginAdminPost)
 
 router.get('/recuperarAdmin', RecuperarAdminGet)
 
-router.post('/recuperarAdmin', RecuperarAdminPost)
+router.post('/recuperarAdmin', RecuperarAdminPost2)
 
-router.post('/verificarAdmin:Token', VerificarAdmin)
+router.post('/VerificarAdmin', VerificarAdmin2)
 
 router.get('/UpdateAdmin', updateAdminGet)
 

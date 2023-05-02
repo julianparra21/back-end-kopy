@@ -11,7 +11,7 @@ CREATE TABLE cliente (
     direccion_cliente VARCHAR(30) NOT NULL,
     email_cliente VARCHAR(50) NOT NULL UNIQUE,
     password_cliente VARCHAR(30) NOT NULL,
-    token_cliente VARCHAR(50),
+    token_cliente VARCHAR(50)
 );
 
 CREATE TABLE producto (
@@ -27,7 +27,7 @@ CREATE TABLE producto (
 
 
 create table administrador(
-	id_admin INT PRIMARY KEY,
+	id_admin INT PRIMARY KEY AUTO_INCREMENT,
     nombre_admin varchar(50)not null,
     apellido_admin varchar(50)not null,
     email_admin varchar(100)not null,
