@@ -89,8 +89,8 @@ export const RecuperarAdminPost = async (req, res) => {
 };
 
 export const VerificarAdmin= async (req, res) => {
-    const token = req.body.tokenAD;
-    const password = req.body.passwordAD;
+    const token = req.body.token;
+    const password = req.body.password;
     const saltAdmin = 10;
     const hashedPasswordAdmin = await bcrypt.hash(password, saltAdmin);
 
@@ -111,7 +111,7 @@ export const VerificarAdmin= async (req, res) => {
                 "SELECT * FROM administrador WHERE email_admin = ?",
                 [email]
             );
-            console.log(admin);
+            console.log("correcto");
         } else {
             console.log("Token not found");
             res.status(401).json({ message: "Codigo invalido" });
@@ -131,10 +131,10 @@ export const updateAdminGet = (req, res) => {
 }
 
 export const updateAdminPost = async (req, res) => {
-    const {email,telefono}=req.body;
+    const {email,id}=req.body;
 
     try {
-        const [rows] = await pool.query(`UPDATE admin SET email=?,telefono=? WHERE id_admin=?`, [email,telefono]);
+        const [rows] = await pool.query(`UPDATE administrador SET email_admin=? WHERE id_admin=?`, [email,id]);
         res.status(200).json({ message: 'Admin actualizado correctamente' });
 
         
