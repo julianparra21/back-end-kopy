@@ -1,8 +1,10 @@
 import {config} from 'dotenv'
 import express from "express";
-import { pool } from './db.js'
+
 import cors from 'cors'
-import registroRoute from './routes/registro.routes.js'
+import userRoutes from './routes/user.routes.js'
+import adminRoutes from './routes/admin.routes.js'
+import domiciliarioRoutes from './routes/domiciliario.routes.js'
 
 
 const app = express();
@@ -13,7 +15,9 @@ app.use(cors());
 
 config()
 
-app.use('/api', registroRoute)
+app.use('/user', userRoutes)
+app.use('/admin', adminRoutes)
+app.use('/domiciliario', domiciliarioRoutes)
 
 app.use((req, res, next) => {
     res.status(404).json({
