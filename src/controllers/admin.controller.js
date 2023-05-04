@@ -169,3 +169,25 @@ export const deleteAdminPost = async (req, res) => {
 
     }
 }
+
+
+
+//asignar domiciliario
+export const asignarDomiciliarioGet = (req, res) => {
+    res.send("Asignar domiciliario")
+
+
+}
+
+export const asignarDomiciliarioPost = async (req, res) => {
+    const { id_domiciliario, id_compra } = req.body;
+    try {
+        const [rows] = await pool.query(`UPDATE factura SET id_dom=? WHERE id_compra=?`, [id_domiciliario, id_compra]);
+        res.status(200).json({ message: 'Domiciliario asignado correctamente' });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Error al asignar domiciliario' });
+
+    }
+}

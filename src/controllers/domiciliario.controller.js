@@ -92,18 +92,20 @@ export const RecuperarDomiciliarioPost = async (req, res) => {
     }
 }
 
-
+    
 
 
 
 export const VerificarDomiciliario = async (req, res) => {
     const tokenD = req.body.token;
     const contraseña = req.body.password;
+    const salAdmin=10;
+    const hashedPasswordAdmin = await bcrypt.hash(contraseña, salAdmin);
 
     try {
         const [rows] = await pool.query(`SELECT token_dom FROM domiciliario WHERE token_dom = ?`, [tokenD]);
         if (rows.length > 0) {
-            const [rows2] = await pool.query(`UPDATE domiciliario SET contraseña_dom = ? WHERE token_dom = ?`, [contraseña, tokenD]);
+            const [rows2] = await pool.query(`UPDATE domiciliario SET contraseña_dom = ? WHERE token_dom = ?`, [hashedPasswordAdmin, tokenD]);
             res.status(200).json({ message: "Contraseña actualizada" });
 
             const { email } = req.body;
