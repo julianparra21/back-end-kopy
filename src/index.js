@@ -5,6 +5,7 @@ import cors from 'cors'
 import userRoutes from './routes/user.routes.js'
 import adminRoutes from './routes/admin.routes.js'
 import domiciliarioRoutes from './routes/domiciliario.routes.js'
+import productRoutes from './routes/product.routes.js'
 
 
 const app = express();
@@ -18,6 +19,7 @@ config()
 app.use('/user', userRoutes)
 app.use('/admin', adminRoutes)
 app.use('/domiciliary', domiciliarioRoutes)
+app.use('/product', productRoutes)
 
 app.use((req, res, next) => {
     res.status(404).json({

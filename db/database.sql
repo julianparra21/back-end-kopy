@@ -16,8 +16,10 @@ CREATE TABLE cliente (
 CREATE TABLE producto (
     id_producto INT PRIMARY KEY AUTO_INCREMENT,
     nombre_producto VARCHAR(50) NOT NULL,
+
     descripcion_producto VARCHAR(50) NOT NULL,
     precio DECIMAL(10, 2) NOT NULL,
+    cantidad_producto INT,
     categoria
     SET
 (
@@ -27,9 +29,9 @@ CREATE TABLE producto (
             'chocolates',
             'desayunos'
         ) NOT NULL,
-        id_imagen TEXT NOT NULL,
-        url_imagen TEXT NOT NULL
+        id_imagen TEXT NOT NULL 
 );
+      
 
 create table administrador(
     id_admin INT PRIMARY KEY AUTO_INCREMENT,
@@ -62,6 +64,7 @@ CREATE TABLE compra (
     fecha_compra DATE,
     id_cliente INT NOT NULL,
     id_administrador INT NOT NULL,
+    cantidad_compra INT NOT NULL,
     id_producto INT NOT NULL,
     id_categoria INT NOT NULL,
     precio_compra DECIMAL(10, 2) NOT NULL,
