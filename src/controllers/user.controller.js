@@ -86,14 +86,13 @@ export const LoginGet = (req, res) => {
 // }
 
 export const LoginPost = async (req, res) => {
-
     try {
-
         const { email, password } = req.body;
 
-        if (!email || !password) { // validación de campos vacíos
+        // Verificar si el email o la contraseña están ausentes o son una cadena vacía
+        if (!email || !password || email.trim() === '' || password.trim() === '') {
             return res.status(400).json({
-                message: "Por favor, ingrese el email y la contraseña"
+                message: "El email y la contraseña son campos obligatorios."
             });
         }
 
@@ -112,9 +111,9 @@ export const LoginPost = async (req, res) => {
             });
         }
     } catch (error) {
-        console.log(error); // muestra el error en la consola para facilitar el debugging
+        console.error(error);
         return res.status(500).json({
-            message: "Error al iniciar sesión",
+            message: "Error al iniciar sesión. Por favor, inténtelo de nuevo más tarde."
         });
     }
 }
@@ -129,15 +128,15 @@ export const RecuperarGet = (req, res) => {
 
 
 export const RecuperarPost = async (req, res) => {
-    const email = req.body.email;
-
-    if (!email) { // validación de campo vacío
-        return res.status(400).json({
-            message: "Por favor, ingrese su correo electrónico"
-        });
-    }
-
     try {
+        const email = req.body.email;
+
+        if (!email) {
+            return res.status(400).json({
+                message: "Por favor, ingrese su correo electrónico"
+            });
+        }
+
         const [rows] = await pool.query(`SELECT email_cliente FROM cliente WHERE email_cliente = ?`, [email]);
 
         if (rows.length > 0) {
@@ -146,43 +145,40 @@ export const RecuperarPost = async (req, res) => {
 
             await sendEmails(email, tokensEmail, 4, tokensEmail);
 
-            res.status(200).json({ message: 'Correo enviado correctamente' });
+            return res.status(200).json({ message: 'Correo enviado correctamente' });
         } else {
-            res.status(401).json({ message: "El correo electrónico no está registrado" });
+            return res.status(401).json({ message: "El correo electrónico no está registrado" });
         }
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: 'Error al enviar correo' });
+        console.error(error);
+        return res.status(500).json({ message: 'Error al enviar correo' });
     }
 };
 
 export const Verificar = async (req, res) => {
-    const { token, password } = req.body;
-
-    if (!token || !password) { // validación de campos vacíos
-        return res.status(400).json({
-            message: "Por favor, ingrese el código de recuperación y la nueva contraseña"
-        });
-    }
-
-    const saltUser = 10;
-    const hashedPassword = await bcrypt.hash(password, saltUser);
-
     try {
+        const { token, password } = req.body;
+
+        if (!token || !password) {
+            return res.status(400).json({
+                message: "Por favor, ingrese el código de recuperación y la nueva contraseña"
+            });
+        }
+
+        const saltUser = 10;
+        const hashedPassword = await bcrypt.hash(password, saltUser);
+
         const [rows] = await pool.query(`SELECT token_cliente FROM cliente WHERE token_cliente = ?`, [token]);
         if (rows.length > 0) {
             const [rows2] = await pool.query(`UPDATE cliente SET password_cliente = ? WHERE token_cliente = ?`, [hashedPassword, token]);
-            res.status(200).json({ message: "Contraseña actualizada" });
-
-            const { email } = req.body;
-            const [rows] = await pool.query('SELECT * FROM cliente WHERE email_cliente = ?', [email]);
-
+            return res.status(200).json({ message: "Contraseña actualizada correctamente" });
         } else {
-            res.status(401).json({ message: "El código de recuperación es incorrecto" });
+            return res.status(401).json({ message: "El código de recuperación es incorrecto" });
         }
     } catch (error) {
+        console.error(error);
         return res.status(500).json({
-            message: "Error al verificar el código",
+            message: "Error al verificar el código de recuperación",
         })  
     }
 }

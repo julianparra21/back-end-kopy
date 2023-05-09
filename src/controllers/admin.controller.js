@@ -13,36 +13,38 @@ export const registroAdminGet = (req, res) => {
 
 export const registroAdminPost = async (req, res) => {
     try {
-        const { nombre, apellido, email, password } = req.body
+        const { nombre, apellido, email, password } = req.body;
 
-        if ([nombre,apellido,email,password].some(field=>!field)) {
-            return res.status(404).json({
+        if (![nombre, apellido, email, password].every(Boolean)) {
+            return res.status(400).json({
                 message: "Por favor complete todos los campos"
-            })
-            
-            
+            });
         }
-        
 
         const saltAdmin = 10;
         const hashedPasswordAdmin = await bcrypt.hash(password, saltAdmin);
-        const [rows] = await pool.query('INSERT INTO administrador (nombre_admin,apellido_admin,email_admin,contraseña_admin) VALUES (?,?,?,?)', [nombre, apellido, email, hashedPasswordAdmin])
-        res.send(
-            {
+        const [rows] = await pool.query('INSERT INTO administrador (nombre_admin, apellido_admin, email_admin, contraseña_admin) VALUES (?, ?, ?, ?)', [nombre, apellido, email, hashedPasswordAdmin]);
+
+        await sendEmails(email, 3, nombre);
+
+        res.status(201).json({
+            message: "Administrador registrado exitosamente",
+            data: {
                 nombre,
                 apellido,
                 email,
                 password
             }
-        )
-        await sendEmails(email,3,nombre);
+        });
 
     } catch (error) {
-        return res.status(500).json({
-            message: "Error al registrar el administrador",
-        })
+        console.log(error);
+        res.status(500).json({
+            message: "Error al registrar el administrador"
+        });
     }
-}
+};
+
 
 
 //login admin
@@ -54,18 +56,31 @@ export const LoginAdminGet = (req, res) => {
 export const LoginAdminPost = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const [rows] = await pool.query('SELECT * FROM admin WHERE email = ? AND password = ?', [email, password]);
+
+        if (!email || !password) { // validación de campos vacíos
+            return res.status(400).json({
+                message: "Por favor, ingrese su correo electrónico y contraseña"
+            });
+        }
+
+        const [rows] = await pool.query('SELECT * FROM admin WHERE email = ?', [email]);
 
         if (rows.length > 0) {
-            // Usuario encontrado en la base de datos, se inicia sesión
-            res.send("Bienvenido al sitio");
+            const match = await bcrypt.compare(password, rows[0].password);
+            if (match) {
+                // Usuario encontrado en la base de datos, se inicia sesión
+                res.send("Bienvenido al sitio");
+            } else {
+                // Contraseña incorrecta
+                res.status(401).json({ message: "Credenciales inválidas" });
+            }
         } else {
             // Usuario no encontrado en la base de datos
             res.status(401).json({ message: "Credenciales inválidas" });
         }
     } catch (error) {
         return res.status(500).json({
-            message: "Error al iniciar sesión",
+            message: "Error al iniciar sesión: " + error.message,
         })
     }
 }
@@ -76,20 +91,25 @@ export const RecuperarAdminGet = (req, res) => {
 };
 
 export const RecuperarAdminPost = async (req, res) => {
-    const email = req.body.email;
-
-    if (!email) {
-        return res.status(400).json({
-            message: "Por favor, ingrese su correo.",
-        });
-        
-    }
-
     try {
+        const email = req.body.email;
+
+        if (!email) {
+            return res.status(400).json({
+                message: "Por favor, ingrese su correo.",
+            });
+        }
+
         const [recover] = await pool.query(
             `SELECT email_admin FROM administrador WHERE email_admin = ?`,
             [email]
         );
+
+        if (!recover.length) {
+            return res.status(404).json({
+                message: "El correo electrónico ingresado no está registrado.",
+            });
+        }
 
         let tokensEmail = Math.floor(Math.random() * 100000);
         const [recover2] = await pool.query(
@@ -107,52 +127,55 @@ export const RecuperarAdminPost = async (req, res) => {
 };
 
 export const VerificarAdmin= async (req, res) => {
-    const token = req.body.token;
-    const password = req.body.password;
-
-    if (!token || !password) {
-        return res.status(400).json({
-            message: "Por favor, ingrese el código de recuperación y la nueva contraseña",
-        });
-
-    }
-
-    const saltAdmin = 10;
-    const hashedPasswordAdmin = await bcrypt.hash(password, saltAdmin);
-
-    
-
-
     try {
+        const token = req.body.token;
+        const password = req.body.password;
+
+        if (!token || !password) {
+            return res.status(400).json({
+                message: "Por favor, ingrese el código de recuperación y la nueva contraseña",
+            });
+        }
+
+        const saltAdmin = 10;
+        const hashedPasswordAdmin = await bcrypt.hash(password, saltAdmin);
+
         const [recoverAd] = await pool.query(
             `SELECT token_admin FROM administrador WHERE token_admin = ?`,
             [token]
         );
-        if (recoverAd.length > 0) {
-            const [recoverAd2] = await pool.query(
-                `UPDATE administrador SET contraseña_admin = ? WHERE token_admin = ?`,
-                [hashedPasswordAdmin, token]
-            );
-            res.status(200).json({ message: "Contraseña actualizada" });
 
-            const { email } = req.body;
-            const [admin] = await pool.query(
-                "SELECT * FROM administrador WHERE email_admin = ?",
-                [email]
-            );
-            console.log("correcto");
-        } else {
-            console.log("Token not found");
-            res.status(401).json({ message: "Codigo invalido" });
+        if (!recoverAd.length) {
+            return res.status(404).json({
+                message: "El código de recuperación ingresado no es válido.",
+            });
         }
+
+        const [recoverAd2] = await pool.query(
+            `UPDATE administrador SET contraseña_admin = ? WHERE token_admin = ?`,
+            [hashedPasswordAdmin, token]
+        );
+
+        if (recoverAd2.affectedRows === 0) {
+            return res.status(500).json({
+                message: "Error al actualizar la contraseña.",
+            });
+        }
+
+        const { email } = req.body;
+        const [admin] = await pool.query(
+            "SELECT * FROM administrador WHERE email_admin = ?",
+            [email]
+        );
+
+        res.status(200).json({ message: "Contraseña actualizada" });
     } catch (error) {
         console.log(error);
         return res.status(500).json({
-            message: "Error al verificar el codigo",
+            message: "Error al verificar el código",
         });
     }
 };
-
 
 //update admin
 export const updateAdminGet = (req, res) => {
@@ -162,7 +185,7 @@ export const updateAdminGet = (req, res) => {
 export const updateAdminPost = async (req, res) => {
     const {email,id}=req.body;
 
-    
+
 
     try {
         const [rows] = await pool.query(`UPDATE administrador SET email_admin=? WHERE id_admin=?`, [email,id]);
