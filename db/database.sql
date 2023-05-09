@@ -16,7 +16,6 @@ CREATE TABLE cliente (
 CREATE TABLE producto (
     id_producto INT PRIMARY KEY AUTO_INCREMENT,
     nombre_producto VARCHAR(50) NOT NULL,
-
     descripcion_producto VARCHAR(50) NOT NULL,
     precio DECIMAL(10, 2) NOT NULL,
     cantidad_producto INT,
@@ -37,7 +36,7 @@ create table administrador(
     id_admin INT PRIMARY KEY AUTO_INCREMENT,
     nombre_admin varchar(50) not null,
     apellido_admin varchar(50) not null,
-    email_admin varchar(100) not null,
+    email_admin varchar(100) not null UNIQUE,
     contraseña_admin varchar(50),
     token_admin varchar(50)
 );

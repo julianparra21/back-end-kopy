@@ -14,6 +14,16 @@ export const registroAdminGet = (req, res) => {
 export const registroAdminPost = async (req, res) => {
     try {
         const { nombre, apellido, email, password } = req.body
+
+        if ([nombre,apellido,email,password].some(field=>!field)) {
+            return res.status(404).json({
+                message: "Por favor complete todos los campos"
+            })
+            
+            
+        }
+        
+
         const saltAdmin = 10;
         const hashedPasswordAdmin = await bcrypt.hash(password, saltAdmin);
         const [rows] = await pool.query('INSERT INTO administrador (nombre_admin,apellido_admin,email_admin,contraseña_admin) VALUES (?,?,?,?)', [nombre, apellido, email, hashedPasswordAdmin])
@@ -67,6 +77,14 @@ export const RecuperarAdminGet = (req, res) => {
 
 export const RecuperarAdminPost = async (req, res) => {
     const email = req.body.email;
+
+    if (!email) {
+        return res.status(400).json({
+            message: "Por favor, ingrese su correo.",
+        });
+        
+    }
+
     try {
         const [recover] = await pool.query(
             `SELECT email_admin FROM administrador WHERE email_admin = ?`,
@@ -91,8 +109,19 @@ export const RecuperarAdminPost = async (req, res) => {
 export const VerificarAdmin= async (req, res) => {
     const token = req.body.token;
     const password = req.body.password;
+
+    if (!token || !password) {
+        return res.status(400).json({
+            message: "Por favor, ingrese el código de recuperación y la nueva contraseña",
+        });
+
+    }
+
     const saltAdmin = 10;
     const hashedPasswordAdmin = await bcrypt.hash(password, saltAdmin);
+
+    
+
 
     try {
         const [recoverAd] = await pool.query(
@@ -132,6 +161,8 @@ export const updateAdminGet = (req, res) => {
 
 export const updateAdminPost = async (req, res) => {
     const {email,id}=req.body;
+
+    
 
     try {
         const [rows] = await pool.query(`UPDATE administrador SET email_admin=? WHERE id_admin=?`, [email,id]);

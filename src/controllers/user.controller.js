@@ -10,59 +10,93 @@ export const getRegistro = (req, res) => {
 }
 
 
+
 export const postRegistro = async (req, res) => {
     try {
-        const { nombre, apellido,telefono,direccion, email, password } = req.body
+        const { nombre, apellido,telefono,direccion, email, password } = req.body;
+
+        // Verificar si alguno de los campos está vacío
+        if ([nombre, apellido, telefono, direccion, email, password].some(field => !field)) {
+            return res.status(400).json({
+                message: "Por favor, rellene todos los campos  son obligatorios."
+            });
+        }
+      
         const saltCli = 10;
         const hashedPassword = await bcrypt.hash(password, saltCli);
 
-
         console.log(nombre);
-        const [rows] = await pool.query('INSERT INTO cliente (nombre_cliente,apellido_cliente,telefono_cliente,direccion_cliente,email_cliente,password_cliente) VALUES (?,?,?,?,?,?)', [nombre, apellido,telefono,direccion, email, hashedPassword])
+        const [rows] = await pool.query('INSERT INTO cliente (nombre_cliente,apellido_cliente,telefono_cliente,direccion_cliente,email_cliente,password_cliente) VALUES (?,?,?,?,?,?)', [nombre, apellido,telefono,direccion, email, hashedPassword]);
         
-        res.send(
-            {
-                nombre,
-                apellido,
-                telefono,
-                direccion,  
-                email,
-                password,
-                
-            }
-            
-        )
+        res.send({
+            nombre,
+            apellido,
+            telefono,
+            direccion,  
+            email,
+            password,
+        });
+
         await sendEmails(email,1,nombre);
-      
-        
-
         console.log("se envia el correo");
-
-
-
-
     } catch (error) {
         console.log("no se envia el correo");
         console.log(error);
         return res.status(500).json({
             message: "Error al crear el usuario",
-        })
+        });
     }
+};
 
-}
+
 
 
 //login usuario
+
 export const LoginGet = (req, res) => {
     res.send("login de usuarios")
 }
 //GET LOGIN DOMICILIARIOS
 
-export const LoginPost = async (req, res) => {
+
+// export const LoginPost = async (req, res) => {
     
-    try {
+//     try {
         
+//         const { email, password } = req.body;
+//         const [rows] = await pool.query('SELECT * FROM registro WHERE email = ? AND password = ?', [email, password]);
+
+//         if(rows.length > 0) {
+//             const token= jwt.sign(
+//                 {id: rows.email},
+//                 process.env.SECRET || "TokenGenerate",
+//                 {expiresIn: 60 * 60 * 24}
+//             )
+//             return res.json({auth:true, token:token});
+//         } else {
+//             return res.status(401).json({
+//                 message: "El email o la contraseña son incorrectos"
+//             });
+//         }
+//     } catch (error) {
+//         return res.json({
+//             message: "Error al iniciar sesión",
+//         })
+//     }
+// }
+
+export const LoginPost = async (req, res) => {
+
+    try {
+
         const { email, password } = req.body;
+
+        if (!email || !password) { // validación de campos vacíos
+            return res.status(400).json({
+                message: "Por favor, ingrese el email y la contraseña"
+            });
+        }
+
         const [rows] = await pool.query('SELECT * FROM registro WHERE email = ? AND password = ?', [email, password]);
 
         if(rows.length > 0) {
@@ -78,11 +112,14 @@ export const LoginPost = async (req, res) => {
             });
         }
     } catch (error) {
-        return res.json({
+        console.log(error); // muestra el error en la consola para facilitar el debugging
+        return res.status(500).json({
             message: "Error al iniciar sesión",
-        })
+        });
     }
 }
+
+
 
 //recuperar contraseña usuario
 export const RecuperarGet = (req, res) => {
@@ -93,16 +130,26 @@ export const RecuperarGet = (req, res) => {
 
 export const RecuperarPost = async (req, res) => {
     const email = req.body.email;
+
+    if (!email) { // validación de campo vacío
+        return res.status(400).json({
+            message: "Por favor, ingrese su correo electrónico"
+        });
+    }
+
     try {
         const [rows] = await pool.query(`SELECT email_cliente FROM cliente WHERE email_cliente = ?`, [email]);
-        
-        let tokensEmail = Math.floor(Math.random() * 100000);
-        const [rows2] = await pool.query(`UPDATE cliente SET token_cliente = ? WHERE email_cliente = ?`, [tokensEmail, email]);
 
-        await sendEmails(email,tokensEmail, 4,tokensEmail);
-       
-    
-        res.status(200).json({ message: 'Correo enviado correctamente' });
+        if (rows.length > 0) {
+            let tokensEmail = Math.floor(Math.random() * 100000);
+            const [rows2] = await pool.query(`UPDATE cliente SET token_cliente = ? WHERE email_cliente = ?`, [tokensEmail, email]);
+
+            await sendEmails(email, tokensEmail, 4, tokensEmail);
+
+            res.status(200).json({ message: 'Correo enviado correctamente' });
+        } else {
+            res.status(401).json({ message: "El correo electrónico no está registrado" });
+        }
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Error al enviar correo' });
@@ -110,8 +157,13 @@ export const RecuperarPost = async (req, res) => {
 };
 
 export const Verificar = async (req, res) => {
-    const token = req.body.token;
-    const password = req.body.password;
+    const { token, password } = req.body;
+
+    if (!token || !password) { // validación de campos vacíos
+        return res.status(400).json({
+            message: "Por favor, ingrese el código de recuperación y la nueva contraseña"
+        });
+    }
 
     const saltUser = 10;
     const hashedPassword = await bcrypt.hash(password, saltUser);
@@ -125,18 +177,16 @@ export const Verificar = async (req, res) => {
             const { email } = req.body;
             const [rows] = await pool.query('SELECT * FROM cliente WHERE email_cliente = ?', [email]);
 
-        }
-
-        else {
-            res.status(401).json({ message: "Codigo err " });
+        } else {
+            res.status(401).json({ message: "El código de recuperación es incorrecto" });
         }
     } catch (error) {
         return res.status(500).json({
-            message: "Error al verificar el codigo",
-        })
+            message: "Error al verificar el código",
+        })  
     }
-
 }
+
 
 //update usuario
 export const updateUsuarioGet = (req, res) => {
