@@ -190,18 +190,20 @@ export const updateUsuarioGet = (req, res) => {
 }
 
 export const updateUsuarioPost = async (req, res) => {
-    const {email,telefono}=req.body;
+    const {id,nombre,apellido,telefono,direccion,email}=req.body;
 
-    try {
-        const [rows] = await pool.query(`UPDATE usuario SET email=?,telefono=? WHERE id_usuario=?`, [email,telefono]);
-        res.status(200).json({ message: 'Usuario actualizado correctamente' });
+    const [rows] = await pool.query('UPDATE cliente SET nombre_cliente=?,apellido_cliente=?,telefono_cliente=?,direccion_cliente=?,email_cliente=? WHERE id_cliente=?', [nombre,apellido,telefono,direccion,email,id]);
 
-        
-        
+    res.send({
 
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: 'Error al actualizar Usuario' });
+        id,
+        nombre,
+        apellido,
+        telefono,
+        direccion,
+        email,
 
-    }
-}
+    })
+
+
+};
