@@ -128,6 +128,7 @@ export const RecuperarGet = (req, res) => {
 
 
 export const RecuperarPost = async (req, res) => {
+    console.log(req.body);
     try {
         const email = req.body.email;
 
