@@ -1,7 +1,7 @@
 import {config} from 'dotenv'
 import express from "express";
 
-import morgan from "morgan"
+import morgan from 'morgan'
 import cors from 'cors'
 import userRoutes from './routes/user.routes.js'
 import adminRoutes from './routes/admin.routes.js'
