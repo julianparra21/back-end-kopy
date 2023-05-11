@@ -13,10 +13,10 @@ export const getRegistro = (req, res) => {
 
 export const postRegistro = async (req, res) => {
     try {
-        const { nombre, apellido,telefono,direccion, email, password } = req.body;
+        const {id, nombre,telefono,direccion, email, password } = req.body;
 
         // Verificar si alguno de los campos está vacío
-        if ([nombre, apellido, telefono, direccion, email, password].some(field => !field)) {
+        if ([id,nombre,  telefono, direccion, email, password].some(field => !field)) {
             return res.status(400).json({
                 message: "Por favor, rellene todos los campos  son obligatorios."
             });
@@ -26,11 +26,12 @@ export const postRegistro = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, saltCli);
 
         console.log(nombre);
-        const [rows] = await pool.query('INSERT INTO cliente (nombre_cliente,apellido_cliente,telefono_cliente,direccion_cliente,email_cliente,password_cliente) VALUES (?,?,?,?,?,?)', [nombre, apellido,telefono,direccion, email, hashedPassword]);
+        const [rows] = await pool.query('INSERT INTO cliente (id_cliente,nombre_cliente,telefono_cliente,direccion_cliente,email_cliente,password_cliente) VALUES (?,?,?,?,?,?)', [id,nombre, telefono,direccion, email, hashedPassword]);
         
         res.send({
+            id,
             nombre,
-            apellido,
+           
             telefono,
             direccion,  
             email,
@@ -56,34 +57,6 @@ export const postRegistro = async (req, res) => {
 export const LoginGet = (req, res) => {
     res.send("login de usuarios")
 }
-//GET LOGIN DOMICILIARIOS
-
-
-// export const LoginPost = async (req, res) => {
-    
-//     try {
-        
-//         const { email, password } = req.body;
-//         const [rows] = await pool.query('SELECT * FROM registro WHERE email = ? AND password = ?', [email, password]);
-
-//         if(rows.length > 0) {
-//             const token= jwt.sign(
-//                 {id: rows.email},
-//                 process.env.SECRET || "TokenGenerate",
-//                 {expiresIn: 60 * 60 * 24}
-//             )
-//             return res.json({auth:true, token:token});
-//         } else {
-//             return res.status(401).json({
-//                 message: "El email o la contraseña son incorrectos"
-//             });
-//         }
-//     } catch (error) {
-//         return res.json({
-//             message: "Error al iniciar sesión",
-//         })
-//     }
-// }
 
 export const LoginPost = async (req, res) => {
     try {

@@ -13,9 +13,9 @@ export const registroAdminGet = (req, res) => {
 
 export const registroAdminPost = async (req, res) => {
     try {
-        const { nombre, apellido, email, password } = req.body;
+        const {id, nombre, apellido, email, password } = req.body;
 
-        if (![nombre, apellido, email, password].every(Boolean)) {
+        if (![id, nombre,  email, password].every(Boolean)) {
             return res.status(400).json({
                 message: "Por favor complete todos los campos"
             });
@@ -23,13 +23,14 @@ export const registroAdminPost = async (req, res) => {
 
         const saltAdmin = 10;
         const hashedPasswordAdmin = await bcrypt.hash(password, saltAdmin);
-        const [rows] = await pool.query('INSERT INTO administrador (nombre_admin, apellido_admin, email_admin, contraseña_admin) VALUES (?, ?, ?, ?)', [nombre, apellido, email, hashedPasswordAdmin]);
+        const [rows] = await pool.query('INSERT INTO administrador (id_admin,nombre_admin, email_admin, contraseña_admin) VALUES (?, ?, ?, ?)', [id,nombre, email, hashedPasswordAdmin]);
 
         await sendEmails(email, 3, nombre);
 
         res.status(201).json({
             message: "Administrador registrado exitosamente",
             data: {
+                id,
                 nombre,
                 apellido,
                 email,

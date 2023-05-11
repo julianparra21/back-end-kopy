@@ -7,9 +7,9 @@ import { sendEmails } from "./helpers/nodemailer.js";
 //registro domiciliario
 export const Registrodomiciliario = async (req, res) => {
   try {
-    const { nombre, apellido, telefono, email, password } = req.body;
+    const {id, nombre,  telefono, email, password } = req.body;
 
-    if ([nombre, apellido, telefono, email, password].some((field) => !field)) {
+    if ([id, nombre, telefono, email, password].some((field) => !field)) {
       return res.status(404).json({
         message: `Por favor llene los campos`,
       });
@@ -19,13 +19,14 @@ export const Registrodomiciliario = async (req, res) => {
     const hashedPasswordDom = await bcrypt.hash(password, saltDom);
 
     const [rows] = await pool.query(
-      "INSERT into domiciliario (nombre_dom,apellido_dom,telefono_dom,correo_dom,contraseña_dom) VALUES (?,?,?,?,?)",
-      [nombre, apellido, telefono, email, hashedPasswordDom]
+      "INSERT into domiciliario (id_dom,nombre_dom,telefono_dom,correo_dom,contraseña_dom) VALUES (?,?,?,?,?)",
+      [id,nombre, telefono, email, hashedPasswordDom]
     );
 
     res.send({
+      id, 
       nombre,
-      apellido,
+      
       telefono,
       email,
       password,

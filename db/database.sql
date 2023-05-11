@@ -3,9 +3,9 @@ CREATE DATABASE kopy;
 USE kopy;
 
 CREATE TABLE cliente (
-    id_cliente INT PRIMARY KEY UNIQUE,
+    id_cliente INT PRIMARY KEY ,
     nombre_cliente VARCHAR(50) NOT NULL,
-    apellido_cliente VARCHAR(30) NOT NULL,
+  
     telefono_cliente INT NOT NULL,
     direccion_cliente VARCHAR(30) NOT NULL,
     email_cliente VARCHAR(50) NOT NULL UNIQUE,
@@ -33,9 +33,9 @@ CREATE TABLE producto (
       
 
 create table administrador(
-    id_admin INT PRIMARY KEY UNIQUE,
+    id_admin INT PRIMARY KEY ,
     nombre_admin varchar(50) not null,
-    apellido_admin varchar(50) not null,
+
     email_admin varchar(100) not null UNIQUE,
     contraseña_admin varchar(50),
     token_admin varchar(50)
@@ -48,9 +48,9 @@ create table categoria(
 
 
 CREATE TABLE domiciliario(
-    id_dom int UNIQUE PRIMARY KEY,
+    id_dom int  PRIMARY KEY,
     nombre_dom varchar(30) not null,
-    apellido_dom varchar(30) not null,
+   
     telefono_dom bigint not null,
     correo_dom varchar(100) not null,
     contraseña_dom varchar(30) not null,
