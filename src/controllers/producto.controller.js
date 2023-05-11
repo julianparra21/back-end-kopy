@@ -2,25 +2,69 @@ import { pool } from "../db.js";
 import nodemailer from "nodemailer";
 
 
-export const IngresoProductoGet = (req, res) => {
-    res.send("Ingreso de productos")
-}
+// export const IngresoProductoGet = (req, res) => {
+//     res.send("Ingreso de productos")
+// }
 
-export const IngresoProductoPost = async (req, res) => {
-    const {nombre,descripcion,cantidad,precio,categoria,id_imagen}=req.body;
+// export const IngresoProductoPost = async (req, res) => {
+//     const {nombre,descripcion,cantidad,precio,categoria,id_imagen}=req.body;
 
-    try {
-        const [rows] = await pool.query(`INSERT INTO producto (nombre_producto,descripcion_producto,precio,cantidad_producto,categoria,id_imagen) VALUES (?,?,?,?,?,?)`, [nombre,descripcion,precio,cantidad,categoria,id_imagen]);
-        res.status(200).json({ message: 'Producto ingresado correctamente', id: rows.insertId, nombre,descripcion,precio,categoria,id_imagen});
+//     try {
+//         const [rows] = await pool.query(`INSERT INTO producto (nombre_producto,descripcion_producto,precio,cantidad_producto,categoria,id_imagen) VALUES (?,?,?,?,?,?)`, [nombre,descripcion,precio,cantidad,categoria,id_imagen]);
+//         res.status(200).json({ message: 'Producto ingresado correctamente', id: rows.insertId, nombre,descripcion,precio,categoria,id_imagen});
         
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: 'Error al ingresar producto' });
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({ message: 'Error al ingresar producto' });
 
 
-    }
+//     }
 
+// }
+
+
+
+const cloudinary = require('cloudinary').v2; // Importa la biblioteca de Cloudinary
+
+// Configura Cloudinary con tus credenciales
+cloudinary.config({
+  cloud_name: 'TU_CLOUD_NAME',
+  api_key: 'TU_API_KEY',
+  api_secret: 'TU_API_SECRET'
+});
+
+// Función para cargar la imagen en Cloudinary
+const cargarImagen = (archivo) => {
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.upload(archivo.path, (error, result) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(result.secure_url);
+      }
+    });
+  });
+};
+
+// Controlador para agregar un nuevo producto
+export const IngresoProductoPost = async (req, res) => {
+  const { nombre, descripcion, cantidad, precio, categoria } = req.body;
+  const archivo = req.file; // El archivo de imagen cargado
+
+  try {
+    // Carga la imagen en Cloudinary y obtiene su URL
+    const urlImagen = await cargarImagen(archivo);
+
+    // Almacena la información del producto en la base de datos, incluyendo la URL de la imagen de Cloudinary
+    const [rows] = await pool.query(`INSERT INTO producto (nombre_producto,descripcion_producto,precio,cantidad_producto,categoria,id_imagen) VALUES (?,?,?,?,?,?)`, [nombre,descripcion,precio,cantidad,categoria,urlImagen]);
+    res.status(200).json({ message: 'Producto ingresado correctamente', id: rows.insertId, nombre, descripcion, precio, categoria, urlImagen });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: 'Error al ingresar producto' });
+  }
 }
+
+
 
 //eliminar producto
 export const EliminarProductoGet = (req, res) => {
