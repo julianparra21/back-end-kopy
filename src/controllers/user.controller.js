@@ -59,6 +59,7 @@ export const LoginGet = (req, res) => {
 }
 
 export const LoginPost = async (req, res) => {
+    console.log(req.body);
     try {
         const { email, password } = req.body;
 
@@ -69,7 +70,7 @@ export const LoginPost = async (req, res) => {
             });
         }
 
-        const [rows] = await pool.query('SELECT * FROM registro WHERE email = ? AND password = ?', [email, password]);
+        const [rows] = await pool.query('SELECT * FROM cliente WHERE email_cliente  = ? ', [email]);
 
         if(rows.length > 0) {
             const token= jwt.sign(
