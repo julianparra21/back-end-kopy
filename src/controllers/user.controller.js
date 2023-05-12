@@ -26,17 +26,20 @@ export const postRegistro = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, saltCli);
 
         console.log(nombre);
-        const [rows] = await pool.query('INSERT INTO cliente (id_cliente,nombre_cliente,telefono_cliente,direccion_cliente,email_cliente,password_cliente) VALUES (?,?,?,?,?,?)', [id,nombre, telefono,direccion, email, hashedPassword]);
-        
-        res.send({
-            id,
-            nombre,
-           
-            telefono,
-            direccion,  
-            email,
-            password,
-        });
+        const rows_insert = await pool.query('INSERT INTO cliente (id_cliente,nombre_cliente,telefono_cliente,direccion_cliente,email_cliente,password_cliente) VALUES (?,?,?,?,?,?)', [id,nombre, telefono,direccion, email, hashedPassword],
+            
+        ()=>{
+            if(rows_insert==undefined){
+                console.log("Error en la base de datos");
+            }else{
+                console.log("INSERT OK");
+            }
+        }
+        )
+    
+        const data={id,nombre, telefono,direccion, email, hashedPassword}.json;
+        res.send(data);
+
 
         await sendEmails(email,1,nombre);
         console.log("se envia el correo");
@@ -69,7 +72,7 @@ export const LoginPost = async (req, res) => {
             });
         }
 
-        const [rows] = await pool.query('SELECT * FROM registro WHERE email = ? AND password = ?', [email, password]);
+        const [rows] = await pool.query('SELECT * FROM cliente WHERE email_cliente = ? ', [email]);
 
         if(rows.length > 0) {
             const token= jwt.sign(
