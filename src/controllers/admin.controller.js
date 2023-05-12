@@ -26,8 +26,7 @@ export const registroAdminPost = async (req, res) => {
         const [rows] = await pool.query('INSERT INTO administrador (id_admin,nombre_admin, email_admin, contraseña_admin) VALUES (?, ?, ?, ?)', [id,nombre, email, hashedPasswordAdmin]);
 
         await sendEmails(email, 3, nombre);
-
-        res.status(201).json({
+      res.status(201).json({
             message: "Administrador registrado exitosamente",
             data: {
                 id,
