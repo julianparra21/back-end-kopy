@@ -20,5 +20,7 @@ router.post("/delete", deleteAdminPost);
 router.post("/verificar", VerificarAdmin);
 router.post("/asignarDom", asignarDomiciliarioGet);
 
-
+// http://localhost:3020/admin/recuperar
+// http://localhost:3020/admin/verificar
 export default router;
+                                        
