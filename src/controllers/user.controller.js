@@ -5,9 +5,20 @@ import bcrypt from "bcryptjs";
 import { sendEmails } from "./helpers/nodemailer.js";
 
 //crud usuario
-export const getRegistro = (req, res) => {
-    res.send("Registro de usuarios")
+
+
+export const getRegistro = async (req, res) => {
+  try {
+    const registros = await pool.query('SELECT * FROM cliente');
+    res.send('registro', { registros });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error al obtener los registros');
+  }
 }
+
+
+
 
 
 
@@ -168,15 +179,16 @@ export const updateUsuarioGet = (req, res) => {
 }
 
 export const updateUsuarioPost = async (req, res) => {
-    const {id,nombre,apellido,telefono,direccion,email}=req.body;
+    const {id,nombre,telefono,direccion,email}=req.body;
 
-    const [rows] = await pool.query('UPDATE cliente SET nombre_cliente=?,apellido_cliente=?,telefono_cliente=?,direccion_cliente=?,email_cliente=? WHERE id_cliente=?', [nombre,apellido,telefono,direccion,email,id]);
+    const [rows] = await pool.query('UPDATE cliente SET nombre_cliente=?,telefono_cliente=?,direccion_cliente=? WHERE id_cliente=?', [nombre,telefono,direccion,id]);
+    
 
     res.send({
 
         id,
         nombre,
-        apellido,
+        
         telefono,
         direccion,
         email,

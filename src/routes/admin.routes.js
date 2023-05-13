@@ -4,12 +4,12 @@ import { registroAdminGet,LoginAdminGet,LoginAdminPost,RecuperarAdminGet,Recuper
 const router = Router();
 
 //crud admin
-router.get("/registro", registroAdminGet);
+router.get("/registro", [],registroAdminGet);
 router.get("/login", LoginAdminGet);
 router.get("/recuperar", RecuperarAdminGet);
 router.get("/update", updateAdminGet);
 router.get("/verificar", VerificarAdmin);
-router.get("/delete", deleteAdminGet);
+router.get("/delete", [],deleteAdminGet);
 router.get("/asignarDom", asignarDomiciliarioGet);
 
 router.post("/registro", registroAdminPost);
