@@ -225,17 +225,17 @@ export const updateUsuarioPost = async (req, res) => {
 
     const [rows] = await pool.query('UPDATE cliente SET nombre_cliente=?,telefono_cliente=?,direccion_cliente=? WHERE id_cliente=?', [nombre,telefono,direccion,id]);
     
-
-    res.send({
+    const data2= {
 
         id,
         nombre,
-        
         telefono,
         direccion,
         email,
+    }
 
-    })
+    res.send(data2);
+    
 
 
 };
