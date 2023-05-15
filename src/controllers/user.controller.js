@@ -72,40 +72,82 @@ export const LoginGet = (req, res) => {
     res.send("login de usuarios")
 }
 
+// export const LoginPost = async (req, res) => {
+//     console.log(req.body);
+//     try {
+//         const { email, password } = req.body;
+
+//         // Verificar si el email o la contraseña están ausentes o son una cadena vacía
+//         if (!email || !password || email.trim() === '' || password.trim() === '') {
+//             return res.status(400).json({
+//                 message: "El email y la contraseña son campos obligatorios."
+//             });
+//         }
+
+//         const [rows] = await pool.query('SELECT * FROM cliente WHERE email_cliente = ? ', [email]);
+
+//         if(rows.length > 0) {
+//             const token= jwt.sign(
+//                 {id: rows.email},
+//                 process.env.SECRET || "TokenGenerate",
+//                 {expiresIn: 60 * 60 * 24}
+//             )
+//             return res.json({auth:true, token:token});
+//         } else {
+//             return res.status(401).json({
+//                 message: "El email o la contraseña son incorrectos"
+//             });
+//         }
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(500).json({
+//             message: "Error al iniciar sesión. Por favor, inténtelo de nuevo más tarde."
+//         });
+//     }
+// }
+
+
 export const LoginPost = async (req, res) => {
-    console.log(req.body);
-    try {
-        const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-        // Verificar si el email o la contraseña están ausentes o son una cadena vacía
-        if (!email || !password || email.trim() === '' || password.trim() === '') {
-            return res.status(400).json({
-                message: "El email y la contraseña son campos obligatorios."
-            });
-        }
-
-        const [rows] = await pool.query('SELECT * FROM cliente WHERE email_cliente = ? ', [email]);
-
-        if(rows.length > 0) {
-            const token= jwt.sign(
-                {id: rows.email},
-                process.env.SECRET || "TokenGenerate",
-                {expiresIn: 60 * 60 * 24}
-            )
-            return res.json({auth:true, token:token});
-        } else {
-            return res.status(401).json({
-                message: "El email o la contraseña son incorrectos"
-            });
-        }
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({
-            message: "Error al iniciar sesión. Por favor, inténtelo de nuevo más tarde."
-        });
+    // Verificar si el email o la contraseña están ausentes o son una cadena vacía
+    if (!email || !password || email.trim() === '' || password.trim() === '') {
+      return res.status(400).json({
+        message: "El email y la contraseña son campos obligatorios."
+      });
     }
-}
 
+    const [rows] = await pool.query('SELECT * FROM cliente WHERE email_cliente = ? ', [email]);
+
+    if (rows.length > 0) {
+      const match = await bcrypt.compare(password, rows[0].password_cliente);
+
+      if (match) {
+        const token = jwt.sign(
+          { id: rows[0].email },
+          process.env.SECRET || "TokenGenerate",
+          { expiresIn: 60 * 60 * 24 }
+        );
+
+        return res.status(200).json({ auth: true, token: token });
+      } else {
+        return res.status(401).json({
+          message: "El email o la contraseña son incorrectos"
+        });
+      }
+    } else {
+      return res.status(401).json({
+        message: "El email o la contraseña son incorrectos"
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Error al iniciar sesión. Por favor, inténtelo de nuevo más tarde."
+    });
+  }
+};
 
 
 //recuperar contraseña usuario
