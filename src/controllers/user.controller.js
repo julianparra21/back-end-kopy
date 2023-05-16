@@ -172,6 +172,44 @@ export const RecuperarPost = async (req, res) => {
 
         if (rows.length > 0) {
             let tokensEmail = Math.floor(Math.random() * 100000);
+            //  let new_token=  Math.floor(Math.random() * 100000);
+
+            //  function SolicitarNewToken (new_token){
+            //   const [rows3] = pool.query(`UPDATE cliente SET token_cliente = ? WHERE email_cliente = ?`, [tokensEmail, email]);
+            //   }
+            let tokenExpiration = 1*60*1000;
+            let new_token = Math.floor(Math.random() * 100000);
+
+            const manejarExpiracionToken = async () => {
+              console.log('El token ha expirado. Solicite otro token.');
+      
+              try {
+                // Actualizar el token en la base de datos
+                const [rows2] = await pool.query(
+                  `UPDATE cliente SET token_cliente = ? WHERE email_cliente = ?`,
+                  [new_token, email]
+                );
+      
+                if (rows2.affectedRows === 0) {
+                  throw new Error('El token no se pudo actualizar en la base de datos');
+                }else{
+                  console.log("El token se actualizo correctamente");
+                }
+                // await sendEmails(email, new_token, 4, new_token);
+              } catch (error) {
+                console.error(error);
+              }
+            };
+            
+            setTimeout(manejarExpiracionToken, tokenExpiration);
+           
+
+
+            //actualizamos el token de la base de datos 
+              
+              
+
+
             const [rows2] = await pool.query(`UPDATE cliente SET token_cliente = ? WHERE email_cliente = ?`, [tokensEmail, email]);
 
             await sendEmails(email, tokensEmail, 4, tokensEmail);
