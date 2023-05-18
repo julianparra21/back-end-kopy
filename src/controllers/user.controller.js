@@ -281,4 +281,4 @@ export const updateUsuarioPost = async (req, res) => {
     
 
 
-};
+};  

@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { pool } from "../db.js";
 import bcrypt from "bcryptjs";
 
+
 import { sendEmails } from "./helpers/nodemailer.js";
 
 
@@ -21,9 +22,9 @@ export const registroAdminPost = async (req, res) => {
             });
         }
 
-        const saltAdmin = 10;
-        const hashedPasswordAdmin = await bcrypt.hash(password, saltAdmin);
-        const [rows] = await pool.query('INSERT INTO administrador (id_admin,nombre_admin, email_admin, contraseña_admin) VALUES (?, ?, ?, ?)', [id,nombre, email, hashedPasswordAdmin]);
+        // const saltAdmin = 10;
+        // const hashedPasswordAdmin = await bcrypt.hash(password, saltAdmin);
+        const [rows] = await pool.query('INSERT INTO administrador (id_admin,nombre_admin, email_admin, contraseña_admin) VALUES (?, ?, ?, ?)', [id,nombre, email, password]);
 
         await sendEmails(email, 3, nombre);
       res.status(201).json({
@@ -63,20 +64,24 @@ export const LoginAdminPost = async (req, res) => {
             });
         }
 
-        const [rows] = await pool.query('SELECT * FROM admin WHERE email = ?', [email]);
+        const [rows] = await pool.query('SELECT * FROM administrador WHERE email_admin = ?', [email]);
 
         if (rows.length > 0) {
-            const match = await bcrypt.compare(password, rows[0].password);
-            if (match) {
-                // Usuario encontrado en la base de datos, se inicia sesión
-                res.send("Bienvenido al sitio");
-            } else {
-                // Contraseña incorrecta
-                res.status(401).json({ message: "Credenciales inválidas" });
-            }
-        } else {
-            // Usuario no encontrado en la base de datos
-            res.status(401).json({ message: "Credenciales inválidas" });
+        const validatePassword= rows[0].contraseña_admin;
+
+        if (validatePassword===password) {
+            const token= jwt.sign(
+                {id: rows[0].email},
+                process.env.SECRET || "tokenGenerate",
+                {expiresIn: 60*60*24}
+            );
+            return res.status(200).json({auth:true, token: token});
+            
+        }else {
+            return res.status(401).json({message: "Invalid email address or password"});
+        }
+
+
         }
     } catch (error) {
         return res.status(500).json({
