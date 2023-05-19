@@ -1,6 +1,11 @@
 import { Router } from "express";
 import { postRegistro,LoginPost,LoginGet,RecuperarGet,RecuperarPost,Verificar,getRegistro,updateUsuarioGet,updateUsuarioPost } from "../controllers/user.controller.js";
 
+
+
+
+
+
 const router = Router();
 
 //crud usuario

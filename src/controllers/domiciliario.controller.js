@@ -7,39 +7,32 @@ import { sendEmails } from "./helpers/nodemailer.js";
 //registro domiciliario
 export const Registrodomiciliario = async (req, res) => {
   try {
-    const {id, nombre,  telefono, email, password } = req.body;
+    const { id, nombre, telefono, email, password } = req.body;
 
-    if ([id, nombre, telefono, email, password].some((field) => !field)) {
-      return res.status(404).json({
-        message: `Por favor llene los campos`,
-      });
+    // Verificar que todos los campos estén presentes
+    if (!id || !nombre || !telefono || !email || !password) {
+      return res.status(400).json({ message: 'Por favor llene todos los campos' });
     }
 
-    const saltDom = 10;
-    const hashedPasswordDom = await bcrypt.hash(password, saltDom);
+    // Encriptar la contraseña utilizando bcrypt
+    // const saltRounds = 10;
+    // const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    const [rows] = await pool.query(
-      "INSERT into domiciliario (id_dom,nombre_dom,telefono_dom,correo_dom,contraseña_dom) VALUES (?,?,?,?,?)",
-      [id,nombre, telefono, email, hashedPasswordDom]
-    );
+    // Insertar el domiciliario en la base de datos
+    const query = 'INSERT INTO domiciliario (id_dom, nombre_dom, telefono_dom, correo_dom, contraseña_dom) VALUES (?, ?, ?, ?, ?)';
+    const [rows] = await pool.query(query, [id, nombre, telefono, email, password]);
 
-    res.send({
-      id, 
-      nombre,
-      
-      telefono,
-      email,
-      password,
-    });
+    // Enviar respuesta de éxito
+    res.status(200).json({ message: 'Registro exitoso' });
 
+    // Envío de correo electrónico (suponiendo que la función sendEmails existe y está implementada correctamente)
     await sendEmails(email, 2, nombre);
   } catch (error) {
-    console.log("no se envia el correo");
-    return res.status(500).json({
-      message: "Error al crear el usuario",
-    });
+    console.log('Error al crear el usuario:', error);
+    res.status(500).json({ message: 'Error al crear el usuario' });
   }
 };
+
 
 export const GetRegistrodomiciliario = (req, res) => {
   res.send("Registro de Domiciliarios");
