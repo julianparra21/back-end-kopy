@@ -12,7 +12,8 @@ export const getRegistro = async (req, res) => {
 
   try {
     const registros = await pool.query('SELECT * FROM cliente');
-    res.send('registro', { registros });
+   console.log(registros);
+   res.json(registros[0]);
   } catch (error) {
     console.error(error);
     res.status(500).send('Error al obtener los registros');
