@@ -13,6 +13,7 @@ export const registroAdminGet = (req, res) => {
 }
 
 export const registroAdminPost = async (req, res) => {
+    console.log(req.body);
     try {
         const {id, nombre, apellido, email, password } = req.body;
 
@@ -55,6 +56,7 @@ export const LoginAdminGet = (req, res) => {
 
 
 export const LoginAdminPost = async (req, res) => {
+    console.log(req.body);
     try {
         const { email, password } = req.body;
 
@@ -65,6 +67,7 @@ export const LoginAdminPost = async (req, res) => {
         }
 
         const [rows] = await pool.query('SELECT * FROM administrador WHERE email_admin = ?', [email]);
+        console.log(rows);
 
         if (rows.length > 0) {
         const validatePassword= rows[0].contraseña_admin;

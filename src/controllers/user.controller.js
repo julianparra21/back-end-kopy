@@ -8,11 +8,9 @@ import { sendEmails } from "./helpers/nodemailer.js";
 
 
 export const getRegistro = async (req, res) => {
-
-
   try {
     const registros = await pool.query('SELECT * FROM cliente');
-   console.log(registros);
+    console.log(registros);
    res.json(registros[0]);
   } catch (error) {
     console.error(error);
