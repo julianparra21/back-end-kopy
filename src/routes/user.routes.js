@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { postRegistro,LoginPost,LoginGet,RecuperarGet,RecuperarPost,Verificar,getRegistro,updateUsuarioGet,updateUsuarioPost } from "../controllers/user.controller.js";
 
-
+import { verifyToken } from "../controllers/validateToken.js";
 
 
 
@@ -22,5 +22,8 @@ router.post("/recuperar", RecuperarPost);
 router.post("/update", updateUsuarioPost);
 router.post("/verificar", Verificar);
 
+
+
+router.get('/verifyToken', verifyToken)
 
 export default router;

@@ -1,28 +1,23 @@
-import  jwt from "jsonwebtoken";
 
-// Obtén el token del localStorage
-const token = localStorage.getItem('token');
+import jwt from 'jsonwebtoken';
 
-// Define una función para validar el token
-function validarToken(token) {
-  try {
-    // Verifica y decodifica el token
-    const decoded = jwt.verify(token, 'secreto_del_jwt');
+export const verifyToken = (req, res, next) => {
+  const token = req.headers['authorization'];
 
-    // El token es válido
-    return decoded;
-  } catch (error) {
-    // El token no es válido
-    return null;
+  if (!token) {
+    return res.status(401).json({
+      message: 'No se proporcionó un token de autenticación'
+    });
   }
-}
 
-// Llama a la función de validación con el token
-const resultado = validarToken(token);
+  jwt.verify(token, process.env.SECRET || 'TokenGenerate', (err, decoded) => {
+    if (err) {
+      return res.status(401).json({
+        message: 'El token de autenticación es inválido'
+      });
+    }
 
-// Comprueba el resultado
-if (resultado) {
-  console.log('El token es válido:', resultado);
-} else {
-  console.log('El token no es válido');
-}
+    req.userId = decoded.id; 
+    next();
+  });
+};

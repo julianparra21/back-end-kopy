@@ -126,7 +126,7 @@ export const LoginPost = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Verificar si el email o la contraseña están ausentes o son una cadena vacía
+    
     if (!email || !password || email.trim() === '' || password.trim() === '') {
       return res.status(400).json({
         message: "El email y la contraseña son campos obligatorios."
@@ -139,13 +139,15 @@ export const LoginPost = async (req, res) => {
       const storedPassword = rows[0].password_cliente;
 
       if (password === storedPassword) {
+        const email = rows[0].email_cliente;
+
         const token = jwt.sign(
-          { id: rows[0].email },
+          { email: email }, 
           process.env.SECRET || "TokenGenerate",
           { expiresIn: 60 * 60 * 24 }
         );
 
-        return res.status(200).json({ auth: true, token: token });
+        return res.status(200).json({ auth: true, token: token, email: email });
       } else {
         return res.status(401).json({
           message: "El email o la contraseña son incorrectos"
