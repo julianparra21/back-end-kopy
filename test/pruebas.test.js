@@ -3,18 +3,18 @@ import jwt from 'jsonwebtoken';
 import { app } from '../src/index.js';
 import { assert, expect } from 'chai';
 
-// TEST CREAR UN USUARIO
+// // TEST CREAR UN USUARIO
 // describe('Registro de usuarios', () => {
 //   it('Debería registrar un usuario correctamente', async() => {
 //       const resultado = registrarUsuario(); 
 //       const valorEsperado = 'usuarioRegistrado';
 
 //   const userData = {
-//           id: 2,
+//           id: 933222,
 //           nombre: 'Usuario de prueba',
 //           telefono: '123456789',
 //           direccion: 'Calle 123',
-//           email: 'juan@gmail.com',
+//           email: 'ju33a38222n@gmail.com',
 //           password: '1234567',
 //    }
 //         const response = await request(app)
@@ -24,7 +24,7 @@ import { assert, expect } from 'chai';
 //         assert.equal(response.status,200);
         
 //         console.log('Usuario registrado correctamente. Estado de respuesta: 200');
-//         console.log("Data thw user register",userData); 
+
 //       })
 //       function registrarUsuario() {
 //     const userData = {
@@ -41,31 +41,30 @@ import { assert, expect } from 'chai';
   
 
 // );
-  //TEST TRAER LISTA DE USUARIOS REGISTRADOS
-  // describe('GET /registro', () => {
-  //   it('should respond with status 200 and the registros', async () => {
-  //     const response = await request(app).get('/user/registro');
-  //     expect(response.status).to.equal(200);
-  //   expect(response.body.registros).to.exist;
-  //   console.log("Data the user register", response.body.registros);
-  //   })})
+  // TEST TRAER LISTA DE USUARIOS REGISTRADOS
+  describe('GET /registro', () => {
+    it('should respond with status 200 and the registros', async () => {
+      const response = await request(app).get('/user/registro');
+      expect(response.status).to.equal(200);
+      console.log("Deberia de traer toda la lista de usuarios registrados, con un estado de respuesta:200");
+    console.log("Data the user register", response.body);
+    })})
      
-//AUTENTICACION DE UN USUARIO CON TOKEN
-//   it('should log in a user and return an authentication token', async () => {
-//     const user = {
-//       email: 'johndoe@example.com',
-//       password: 'password123'
-//     };
+// AUTENTICACION DE UN USUARIO CON TOKEN
+  // it('should log in a user and return an authentication token', async () => {
+  //   const user = {
+  //     email: 'julianparra@gmail.com',
+  //     password: 'pedro'
+  //   };
 
-//     const response = await request(app)
-//       .post('/user/login')
-//       .send(user);
+  //   const response = await request(app)
+  //     .post('/user/login')
+  //     .send(user);
 
-//     expect(response.status).toBe(200);
-//     expect(response.body.auth).toBe(true);
-//     expect(response.body.token).toBeDefined();
+  //     assert.equal(response.status)(200)
+  //  assert.equal(response.body.auth).to(true);
 
-//   })
+  // })
 
 //   //RECUPERAR CONTRASEÑA DE USUARIO
 //   it('should send a password recovery email', async () => {
