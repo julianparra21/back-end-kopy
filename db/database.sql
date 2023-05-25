@@ -35,10 +35,10 @@ CREATE TABLE producto (
 create table administrador(
     id_admin BIGINT PRIMARY KEY ,
     nombre_admin varchar(50) not null,
-
     email_admin varchar(100) not null UNIQUE,
     contraseña_admin varchar(50),
-    token_admin varchar(50)
+    token_admin varchar(50),
+    pin_admin text
 );
 
 create table categoria(

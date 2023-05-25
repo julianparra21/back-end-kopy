@@ -15,7 +15,7 @@ export const registroAdminGet = (req, res) => {
 export const registroAdminPost = async (req, res) => {
     console.log(req.body);
     try {
-        const {id, nombre, apellido, email, password } = req.body;
+        const {id, nombre, apellido, email, password,pin } = req.body;
 
         if (![id, nombre,  email, password].every(Boolean)) {
             return res.status(400).json({
@@ -25,7 +25,7 @@ export const registroAdminPost = async (req, res) => {
 
         // const saltAdmin = 10;
         // const hashedPasswordAdmin = await bcrypt.hash(password, saltAdmin);
-        const [rows] = await pool.query('INSERT INTO administrador (id_admin,nombre_admin, email_admin, contraseña_admin) VALUES (?, ?, ?, ?)', [id,nombre, email, password]);
+        const [rows] = await pool.query('INSERT INTO administrador (id_admin,nombre_admin, email_admin, contraseña_admin,pin_admin) VALUES (?, ?, ?, ?,?)', [id,nombre, email, password,pin]);
 
         await sendEmails(email, 3, nombre);
       res.status(201).json({
@@ -35,7 +35,8 @@ export const registroAdminPost = async (req, res) => {
                 nombre,
                 apellido,
                 email,
-                password
+                password,
+                pin
             }
         });
 
@@ -234,7 +235,39 @@ export const deleteAdminPost = async (req, res) => {
 
 
 
-//asignar domiciliario
+export const Verificar = async (req, res) => {
+    try {
+      const { pin } = req.body;
+    const [rows] = await pool.query(
+        `SELECT pin_admin FROM administrador WHERE pin_admin = ?`,
+        [pin]
+        
+    )
+    const pinAdmin=rows[0].pin_admin;
+      if (pin===pinAdmin) {
+        return res.status(200).json({
+          message:
+            "Pin correcto",
+        })
+      }
+      
+    }catch (e) {
+        return res.status(400).json({
+            message:
+              "Pin incorrecto",
+          });
+
+    }
+}
+export const verificarPinGet = (req, res) => {
+    res.send("Verificando pin admin")
+}
+
+      // const saltUser = 10;
+      // const hashedPassword = await bcrypt.hash(password, saltUser);
+  
+    
+      
 export const asignarDomiciliarioGet = (req, res) => {
     res.send("Asignar domiciliario")
 
