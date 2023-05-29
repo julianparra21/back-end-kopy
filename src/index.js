@@ -7,6 +7,8 @@ import userRoutes from './routes/user.routes.js'
 import adminRoutes from './routes/admin.routes.js'
 import domiciliarioRoutes from './routes/domiciliario.routes.js'
 import productRoutes from './routes/product.routes.js'
+import { PORT } from '../config.js';
+
 
 
 const app = express();
@@ -30,7 +32,7 @@ app.use((req, res, next) => {
     })
 })
 
-app.listen(3020)
-console.log(`🦾  Server is running on port ${process.env.PORT} 😬`);
+app.listen(PORT)
+console.log(`🦾  Server is running on port ${PORT} 😬`);
 
 export {app}

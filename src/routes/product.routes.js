@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import {ComprarProductoGet,ComprarProductoPost, IngresoProductoGet,ActualizarProductoGet,ActualizarProductoPost,EliminarProductoGet,EliminarProductoPost,IngresoProductoPost } from "../controllers/producto.controller.js";
+import {ComprarProductoGet,ComprarProductoPost, IngresoProductoGet,ActualizarProductoGet,ActualizarProductoPost,EliminarProductoGet,EliminarProductoPost,IngresoProductoPost,ObtenerProductos } from "../controllers/producto.controller.js";
 
 const router = Router();
 
@@ -16,6 +16,9 @@ router.post("/actualizar", ActualizarProductoPost);
 
 router.get("/comprar", ComprarProductoGet);
 router.post("/comprar", ComprarProductoPost);
+
+
+router.get("/obtener",ObtenerProductos)
 
 
 

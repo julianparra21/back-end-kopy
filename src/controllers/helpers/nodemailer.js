@@ -1,14 +1,17 @@
 import nodemailer from 'nodemailer';
-import fs from 'fs';
+import { EMAIL_HOST,EMAIL_PASSWORD,EMAIL_PORT,EMAIL_USER } from '../../../config.js';
+
+
+
 
 
 
 const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
+  host: EMAIL_HOST,
+  port: EMAIL_PORT,
   auth: {
-    user: 'kopyfruit@gmail.com',
-    pass: 'miwedgfdwaqeztlg',
+    user: EMAIL_USER,
+    pass: EMAIL_PASSWORD,
   },
 });
 

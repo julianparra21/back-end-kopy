@@ -238,6 +238,12 @@ export const deleteAdminPost = async (req, res) => {
 export const Verificar = async (req, res) => {
     try {
       const { pin } = req.body;
+
+        if (!pin) {
+            res.status(404).json({ message: 'Por favor ingrese el pin brindado por el equipo de desarrollo'});
+            
+        }
+
     const [rows] = await pool.query(
         `SELECT pin_admin FROM administrador WHERE pin_admin = ?`,
         [pin]
