@@ -6,7 +6,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon src/index.js",
-    "test": "mocha test/pruebas.test.js"
+    "test": "mocha test/pruebas.test.js",
+    "start":"nodemon src/index.js"
+
+
   },
   "keywords": [],
   "author": "",
