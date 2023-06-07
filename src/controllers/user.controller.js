@@ -145,7 +145,7 @@ export const RecuperarPost = async (req, res) => {
               await sendEmails(email, 4,tokensEmail );
               }
     
-           
+           res.send("Se ha enviado un correo electrónico a su cuenta de correo electrónico con un código de verificación. Por favor, verifique su correo electrónico para continuar");
 
 
               

@@ -1,5 +1,5 @@
 CREATE DATABASE kopy;
--- //https://youtu.be/nrG0tKSYMHc   link de despliegue
+
 USE kopy;
 
 CREATE TABLE cliente (
