@@ -34,15 +34,12 @@ export const IngresoProductoGet = (req, res) => {
 
 // Controlador para agregar un nuevo producto
 export const IngresoProductoPost = async (req, res) => {
-  const { nombre, descripcion, cantidad, precio, categoria } = req.body;
-  const archivo = req.file; // El archivo de imagen cargado
+  const { id,nombre, descripcion, cantidad, precio, categoria,urlImagen } = req.body;
+ 
 
   try {
-    // Carga la imagen en Cloudinary y obtiene su URL
-    const urlImagen = await cargarImagen(archivo);
 
-    // Almacena la información del producto en la base de datos, incluyendo la URL de la imagen de Cloudinary
-    const [rows] = await pool.query(`INSERT INTO producto (nombre_producto,descripcion_producto,precio,cantidad_producto,categoria,id_imagen) VALUES (?,?,?,?,?,?)`, [nombre,descripcion,precio,cantidad,categoria,urlImagen]);
+    const [rows] = await pool.query(`INSERT INTO producto (id_producto,nombre_producto,descripcion_producto,precio,cantidad_producto,categoria,id_imagen) VALUES (?,?,?,?,?,?,?)`, [id,nombre,descripcion,precio,cantidad,categoria,urlImagen]);
     res.status(200).json({ message: 'Producto ingresado correctamente', id: rows.insertId, nombre, descripcion, precio, categoria, urlImagen });
   } catch (error) {
     console.log(error);
