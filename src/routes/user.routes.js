@@ -10,6 +10,7 @@ import {
   viewProfileGet,
   updateUsuarioGet,
   updateUsuarioPost,
+  eliminarCuenta
 } from "../controllers/user.controller.js";
 
 import { verifyToken } from "../controllers/validateToken.js";
@@ -29,5 +30,7 @@ router.post("/login", LoginPost);
 router.post("/recuperar", RecuperarPost);
 router.put("/updateDatos", verifyToken, updateUsuarioPost);
 router.post("/verificar", Verificar);
+
+router.delete("/eliminar/:id",eliminarCuenta, verifyToken)
 
 export default router;

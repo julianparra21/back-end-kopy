@@ -238,3 +238,17 @@ export const viewProfileGet = async (req, res) => {
         console.error(error);
     }
 }
+
+//delete usuario
+export const eliminarCuenta = async (req, res) => {
+   
+        const { id } = req.params;
+    try {
+        const [rows] = await pool.query('DELETE FROM cliente WHERE id_cliente = ?', [id]);
+        res. status(200).json({ message: "Usuario eliminado correctamente" });
+        
+    } catch (error) {
+        console.error(error);
+    } 
+
+};
