@@ -6,32 +6,27 @@ import { sendEmails } from "./helpers/nodemailer.js";
 
 //crud usuario
 
-
 export const getRegistro = async (req, res) => {
   try {
-    const registros = await pool.query('SELECT * FROM cliente');
+    const registros = await pool.query("SELECT * FROM cliente");
     console.log(registros);
-   res.json(registros[0]);
+    res.json(registros[0]);
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error al obtener los registros');
+    res.status(500).send("Error al obtener los registros");
   }
-}
-
-
-
-
-
-
+};
 
 export const postRegistro = async (req, res) => {
   try {
     const { id, nombre, telefono, direccion, email, password } = req.body;
 
     // Verificar si alguno de los campos está vacío
-    if ([id, nombre, telefono, direccion, email, password].some(field => !field)) {
+    if (
+      [id, nombre, telefono, direccion, email, password].some((field) => !field)
+    ) {
       return res.status(400).json({
-        message: "Por favor, rellene todos los campos son obligatorios."
+        message: "Por favor, rellene todos los campos son obligatorios.",
       });
     }
 
@@ -39,7 +34,10 @@ export const postRegistro = async (req, res) => {
     // const hashedPassword = await bcrypt.hash(password, saltRounds);
 
     console.log(nombre);
-    const rows_insert = await pool.query('INSERT INTO cliente (id_cliente, nombre_cliente, telefono_cliente, direccion_cliente, email_cliente, password_cliente) VALUES (?, ?, ?, ?, ?, ?)', [id, nombre, telefono, direccion, email, password]);
+    const rows_insert = await pool.query(
+      "INSERT INTO cliente (id_cliente, nombre_cliente, telefono_cliente, direccion_cliente, email_cliente, password_cliente) VALUES (?, ?, ?, ?, ?, ?)",
+      [id, nombre, telefono, direccion, email, password]
+    );
 
     if (rows_insert === undefined) {
       console.log("Error en la base de datos");
@@ -61,16 +59,11 @@ export const postRegistro = async (req, res) => {
   }
 };
 
-
-
-
-
 //login usuario
 
 export const LoginGet = (req, res) => {
-    res.send("login de usuarios")
-}
-
+  res.send("login de usuarios");
+};
 
 //recuperar contraseña usuario
 
@@ -118,123 +111,149 @@ export const LoginPost = async (req, res) => {
   }
 };
 
-
 export const RecuperarGet = (req, res) => {
-    res.send("Recuperar contraseña")
-}
-
-
+  res.send("Recuperar contraseña");
+};
 
 export const RecuperarPost = async (req, res) => {
-    console.log(req.body);
-    try {
-        const email = req.body.email;
+  console.log(req.body);
+  try {
+    const email = req.body.email;
 
-        if (!email) {
-            return res.status(400).json({
-                message: "Por favor, ingrese su correo electrónico"
-            });
-        }
-
-        const [rows] = await pool.query(`SELECT email_cliente FROM cliente WHERE email_cliente = ?`, [email]);
-
-        if (rows.length > 0) {
-            let tokensEmail = Math.floor(Math.random() * 100000);
-            
-              const [rows3] =await pool.query(`UPDATE cliente SET token_cliente = ? WHERE email_cliente = ?`, [tokensEmail, email]);
-              await sendEmails(email, 4,tokensEmail );
-              }
-    
-           res.send("Se ha enviado un correo electrónico a su cuenta de correo electrónico con un código de verificación. Por favor, verifique su correo electrónico para continuar");
-
-
-              
-              
-
-
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'Error al enviar correo' });
+    if (!email) {
+      return res.status(400).json({
+        message: "Por favor, ingrese su correo electrónico",
+      });
     }
+
+    const [rows] = await pool.query(
+      `SELECT email_cliente FROM cliente WHERE email_cliente = ?`,
+      [email]
+    );
+
+    if (rows.length > 0) {
+      let tokensEmail = Math.floor(Math.random() * 100000);
+
+      const [rows3] = await pool.query(
+        `UPDATE cliente SET token_cliente = ? WHERE email_cliente = ?`,
+        [tokensEmail, email]
+      );
+      await sendEmails(email, 4, tokensEmail);
+    }
+
+    res.send(
+      "Se ha enviado un correo electrónico a su cuenta de correo electrónico con un código de verificación. Por favor, verifique su correo electrónico para continuar"
+    );
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Error al enviar correo" });
+  }
 };
 
 export const Verificar = async (req, res) => {
-    try {
-        const { token, password } = req.body;
+  try {
+    const { token, password } = req.body;
 
-        if (!token || !password) {
-            return res.status(400).json({
-                message: "Por favor, ingrese el código de recuperación y la nueva contraseña"
-            });
-        }
-
-        // const saltUser = 10;
-        // const hashedPassword = await bcrypt.hash(password, saltUser);
-
-        const [rows] = await pool.query(`SELECT token_cliente FROM cliente WHERE token_cliente = ?`, [token]);
-        if (rows.length > 0) {
-            const [rows2] = await pool.query(`UPDATE cliente SET password_cliente = ? WHERE token_cliente = ?`, [password, token]);
-            return res.status(200).json({ message: "Contraseña actualizada correctamente" });
-        } else {
-            return res.status(401).json({ message: "El código de recuperación es incorrecto" });
-        }
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({
-            message: "Error al verificar el código de recuperación",
-        })  
+    if (!token || !password) {
+      return res.status(400).json({
+        message:
+          "Por favor, ingrese el código de recuperación y la nueva contraseña",
+      });
     }
-}
 
+    // const saltUser = 10;
+    // const hashedPassword = await bcrypt.hash(password, saltUser);
+
+    const [rows] = await pool.query(
+      `SELECT token_cliente FROM cliente WHERE token_cliente = ?`,
+      [token]
+    );
+    if (rows.length > 0) {
+      const [rows2] = await pool.query(
+        `UPDATE cliente SET password_cliente = ? WHERE token_cliente = ?`,
+        [password, token]
+      );
+      return res
+        .status(200)
+        .json({ message: "Contraseña actualizada correctamente" });
+    } else {
+      return res
+        .status(401)
+        .json({ message: "El código de recuperación es incorrecto" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Error al verificar el código de recuperación",
+    });
+  }
+};
 
 //update usuario
 export const updateUsuarioGet = async (req, res) => {
-    try { 
-        const [rows] = await pool.query('SELECT * FROM cliente WHERE id_cliente = ?', [req.userId]);
-        res.render('cliente/edit', { cliente: rows[0] });
-    } catch (error) {
-        
-    }
-}
+  try {
+    const [rows] = await pool.query(
+      "SELECT * FROM cliente WHERE email_cliente = ?",
+
+      [req.userId.id]
+    );
+    console.log(rows);
+    res.render("cliente/update", { rows });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Error al actualizar el usuario",
+    });
+  }
+};
+
 export const updateUsuarioPost = async (req, res) => {
-    try {
-      console.log("entra");
-        const { nombre_cliente, apellido_cliente, email_cliente, password_cliente } = req.body;
-        const newCliente = {
-            nombre_cliente,
-            apellido_cliente,
-            email_cliente,
-            password_cliente
-        };
-        const [rows] = await pool.query('UPDATE cliente SET ? WHERE id_cliente = ?', [newCliente, id]);
-        req.flash('success', 'Usuario actualizado correctamente');
-        res.redirect('/cliente');
-    } catch (error) {
-        console.error(error);
-    }
-}
+  try {
+
+    const [rows1] = await pool.query(
+      "SELECT cliente FROM id_cliente =? ,  nombre_cliente = ?, telefono_cliente = ?, direccion_cliente = ? WHERE email_cliente = ?",
+      [ nombreDB, telefonoDB, direccionDB,  req.userId.id]
+
+      
+    );
+    let nombreDB = (req.body.nombre =! null ) ? req.userId.nombre : null;
+    let telefonoDB = (req.body.telefono =! null ) ? req.userId.telefono : null;
+    let direccionDB = (req.body.direccion =! null ) ? req.userId.direccion : null;
+
+
+
+   
+    
+    const [rows] = await pool.query(
+      "UPDATE cliente SET nombre_cliente = ?, telefono_cliente = ?, direccion_cliente = ? WHERE email_cliente = ?",
+      [ nombreDB, telefonoDB, direccionDB,  req.userId.id]
+    );
+    res.redirect("/cliente");
+    console.log(rows);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 
 //view profile
 export const viewProfileGet = async (req, res) => {
+  try {
+    console.log("entra");
+    const [rows] = await pool.query('SELECT * FROM cliente', [req.userId.id]);
+    console.log(rows);
+    if (rows >0 ) {
+      return res.state = {
+        message: "Usuario no encontrado"
 
-    try {
-        console.log("entra");
-        console.log(req.userId);
-        const [rows] = await pool.query('SELECT * FROM cliente', [req.userId]);
-        console.log(rows);
-        if (rows >0 ) {
-          return res.state = {
-            message: "Usuario no encontrado"
+      }
+    } else {
+      return res.status(200).json(rows[0]);
 
-          }
-        } else {
-          return res.status(200).json(rows[0]);
-
-          
-        }
-
-    } catch (error) {
-        console.error(error);
+      
     }
+
+} catch (error) {
+    console.error(error);
+}
 }

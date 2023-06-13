@@ -13,6 +13,7 @@ import {
 } from "../controllers/user.controller.js";
 
 import { verifyToken } from "../controllers/validateToken.js";
+import { verify } from "jsonwebtoken";
 
 const router = Router();
 
@@ -20,9 +21,9 @@ const router = Router();
 router.get("/registro", getRegistro);
 router.get("/login", LoginGet);
 router.get("/recuperar", RecuperarGet);
-router.get("/update", updateUsuarioGet);
+router.get("/update",updateUsuarioGet);
 router.get("/verificar", Verificar);
-router.get("/profile", verifyToken, viewProfileGet);
+router.get("/profile",verifyToken, viewProfileGet);
 
 router.post("/registro", postRegistro);
 router.post("/login", LoginPost);
