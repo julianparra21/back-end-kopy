@@ -50,18 +50,16 @@ export const IngresoProductoPost = async (req, res) => {
 
 
 //eliminar producto
-export const EliminarProductoGet = (req, res) => {
-    res.send("Eliminar producto")
+export const EliminarProductoGet =async (req, res) => {
+    const consulta = await pool.query(`SELECT * FROM producto`);
+    res.json(consulta[0]);
 }
 
-export const EliminarProductoPost = async (req, res) => {
-    const {id}=req.body;
-
+export const deleteProduct=async(req,res)=>{
+    const {id}=req.params;
     try {
-        const [rows] = await pool.query(`DELETE FROM producto WHERE id_producto = ?`, [id]);
+        const [rows] = await pool.query(`DELETE FROM producto WHERE id_producto=?`, [id]);
         res.status(200).json({ message: 'Producto eliminado correctamente' });
-        
-
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Error al eliminar producto' });

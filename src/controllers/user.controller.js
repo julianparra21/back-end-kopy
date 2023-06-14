@@ -208,38 +208,41 @@ export const updateUsuarioGet = async (req, res) => {
 };
 
 export const updateUsuarioPost = async (req, res) => {
-  try {
+  try {        
+    const { nombre, telefono, direccion } = req.body;
+    const updateFields = {}; // Crear un objeto vacío para almacenar los campos actualizables
 
-    const [rows1] = await pool.query(
-      "SELECT cliente FROM id_cliente =? ,  nombre_cliente = ?, telefono_cliente = ?, direccion_cliente = ? WHERE email_cliente = ?",
-      [ nombreDB, telefonoDB, direccionDB,  req.userId.id]
+    if (nombre) {
+      updateFields.nombre_cliente = nombre;
+    }
+    if (telefono) {
+      updateFields.telefono_cliente = telefono;
+    }
+    if (direccion) {
+      updateFields.direccion_cliente = direccion;
+    }
 
-      
-    );
-    let nombreDB = (req.body.nombre =! null ) ? req.userId.nombre : null;
-    let telefonoDB = (req.body.telefono =! null ) ? req.userId.telefono : null;
-    let direccionDB = (req.body.direccion =! null ) ? req.userId.direccion : null;
+    if (Object.keys(updateFields).length === 0) {
+      // Verificar si no hay campos para actualizar
+      return res.status(400).json({ message: "No se proporcionaron datos para actualizar" });
+    }
 
-
-
-   
-    
     const [rows] = await pool.query(
-      "UPDATE cliente SET nombre_cliente = ?, telefono_cliente = ?, direccion_cliente = ? WHERE email_cliente = ?",
-      [ nombreDB, telefonoDB, direccionDB,  req.userId.id]
+      "UPDATE cliente SET ? WHERE email_cliente = ?",
+      [updateFields, req.userId.id]
     );
-    res.redirect("/cliente");
-    console.log(rows);
-  } catch (error) {
-    console.error(error);
-  }
-};
+      res.redirect("/cliente");
+      console.log(rows);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Ha ocurrido un error" });
+    }
+  };
 
 
 //view profile
 export const viewProfileGet = async (req, res) => {
   try {
-    console.log("entra");
     const [rows] = await pool.query('SELECT * FROM cliente', [req.userId.id]);
     console.log(rows);
     if (rows >0 ) {
@@ -257,3 +260,18 @@ export const viewProfileGet = async (req, res) => {
     console.error(error);
 }
 }
+
+
+//delete usuario
+export const eliminarCuenta = async (req, res) => {
+   
+        const { id } = req.params;
+    try {
+        const [rows] = await pool.query('DELETE FROM cliente WHERE id_cliente = ?', [id]);
+        res. status(200).json({ message: "Usuario eliminado correctamente" });
+        
+    } catch (error) {
+        console.error(error);
+    } 
+
+};

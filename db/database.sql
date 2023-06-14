@@ -17,7 +17,7 @@ CREATE TABLE producto (
     id_producto BIGINT PRIMARY KEY AUTO_INCREMENT,
     nombre_producto VARCHAR(50) NOT NULL,
     descripcion_producto VARCHAR(50) NOT NULL,
-    precio DECIMAL(10, 2) NOT NULL,
+    precio BIGINT NOT NULL,
     cantidad_producto INT,
     categoria ENUM('cafe', 'panaderia', 'bebidas', 'chocolates', 'desayunos') NOT NULL,
     id_imagen TEXT NOT NULL
