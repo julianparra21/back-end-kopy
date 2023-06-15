@@ -11,7 +11,7 @@ router.get("/eliminar", EliminarProductoGet);
 router.delete("/eliminar/:id", deleteProduct);
 
 router.get("/actualizar", ActualizarProductoGet);
-router.post("/actualizar", ActualizarProductoPost);
+router.put("/actualizar/:id", ActualizarProductoPost);
 
 
 router.get("/comprar", ComprarProductoGet);
