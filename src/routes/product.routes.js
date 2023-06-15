@@ -18,7 +18,7 @@ router.get("/comprar", ComprarProductoGet);
 router.post("/comprar", ComprarProductoPost);
 
 
-router.get("/obtener",ObtenerProductos)
+router.get("/obtener/:Category",ObtenerProductos)
 
 
 
