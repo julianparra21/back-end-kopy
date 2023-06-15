@@ -71,17 +71,31 @@ export const ActualizarProductoGet = (req, res) => {
     res.send("Actualizar producto")
 }
 
-export const ActualizarProductoPost = async (req, res) => {
-    const {nombre,precio,descripcion}=req.body;
-    const {id_producto}=req.params;
+export const actualizarProducto = async (req, res) => {
+    const { nombre_producto, descripcion_producto, precio, cantidad_producto, categoria, id_imagen } = req.body;
+    const { id } = req.params;
+    
     try {
-        const [rows] = await pool.query(`UPDATE producto SET nombre_producto=?,precio=?,descripcion_producto=? WHERE id_producto=?`, [nombre,precio,descripcion,id_producto]);
-        res.status(200).json({ message: 'Producto actualizado correctamente' });
-    }catch{
-        console.log(error);
-        res.status(500).json({ message: 'Error al actualizar producto' });
+      // Verificar si el producto existe en la base de datos
+      const [existingProduct] = await pool.query('SELECT * FROM producto WHERE id_producto = ?', [id]);
+  
+      if (existingProduct.length === 0) {
+        return res.status(404).json({ message: 'El producto no existe' });
+      }
+  
+      // Actualizar el producto en la base de datos
+      const [rows] = await pool.query(
+        'UPDATE producto SET nombre_producto=?, descripcion_producto=?, precio=?, cantidad_producto=?, categoria=?, id_imagen=? WHERE id_producto=?',
+        [nombre_producto, descripcion_producto, precio, cantidad_producto, categoria, id_imagen, id]
+      );
+  
+      res.status(200).json({ message: 'Producto actualizado correctamente' });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: 'Error al actualizar producto' });
     }
-}
+  };
+  
 
 
 //comprar producto
