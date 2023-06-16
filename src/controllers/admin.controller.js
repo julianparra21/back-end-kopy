@@ -235,36 +235,57 @@ export const deleteAdminPost = async (req, res) => {
 
 
 
-export const Verificar = async (req, res) => {
-    try {
-      const { pin } = req.body;
+// export const Verificar = async (req, res) => {
+//     try {
+//       const { pin } = req.body;
 
-        if (!pin) {
-            res.status(404).json({ message: 'Por favor ingrese el pin brindado por el equipo de desarrollo'});
+//         if (!pin) {
+//             res.status(404).json({ message: 'Por favor ingrese el pin brindado por el equipo de desarrollo'});
             
+//         }
+
+//     const [rows] = await pool.query(
+//         `SELECT pin_admin FROM administrador WHERE pin_admin = ?`,
+//         [pin]
+        
+//     )
+//     const pinAdmin=rows[0].pin_admin;
+//       if (pin===pinAdmin) {
+//         return res.status(200).json({
+//           message:
+//             "Pin correcto",
+//         })
+//       }
+      
+//     }catch (e) {
+//         return res.status(400).json({
+//             message:
+//               "Pin incorrecto",
+//           });
+
+//     }
+// }
+
+
+
+export const verificarPinPost = async (req, res) => {
+    const { pin } = req.body;
+    try {
+        const [rows] = await pool.query(`SELECT * FROM administrador WHERE pin_admin=?`, [pin]);
+        if (rows.length > 0) {
+            res.status(200).json({ message: 'Pin correcto' });
+        } else {
+            res.status(400).json({ message: 'Pin incorrecto' });
         }
 
-    const [rows] = await pool.query(
-        `SELECT pin_admin FROM administrador WHERE pin_admin = ?`,
-        [pin]
-        
-    )
-    const pinAdmin=rows[0].pin_admin;
-      if (pin===pinAdmin) {
-        return res.status(200).json({
-          message:
-            "Pin correcto",
-        })
-      }
-      
-    }catch (e) {
-        return res.status(400).json({
-            message:
-              "Pin incorrecto",
-          });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Error al verificar pin' });
 
     }
 }
+
+
 export const verificarPinGet = (req, res) => {
     res.send("Verificando pin admin")
 }
