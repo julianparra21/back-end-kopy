@@ -111,3 +111,5 @@ create table factura (
     direccion varchar(50),
     CONSTRAINT fk_id_compra FOREIGN KEY (id_compra) REFERENCES compra(id_compra)
 );
+
+-- const Hola
