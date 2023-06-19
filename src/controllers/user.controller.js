@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import { pool } from "../db.js";
-import bcrypt from "bcryptjs";
+
+import {uploadUser} from  "../config-cloudinary.js";
 
 import { sendEmails } from "./helpers/nodemailer.js";
 
@@ -208,9 +209,15 @@ export const updateUsuarioGet = async (req, res) => {
 };
 
 export const updateUsuarioPost = async (req, res) => {
-  try {        
+  try {
+    let image = req.files ? req.files.image.tempFilePath : null;
+    let img = image ? await uploadUser(image) : null;
+    let urlPhoto = image && img ? img.secure_url : null;
+    console.log(req.body)
+    
+
     const { nombre, telefono, direccion } = req.body;
-    const updateFields = {}; // Crear un objeto vacío para almacenar los campos actualizables
+    const updateFields = {};
 
     if (nombre) {
       updateFields.nombre_cliente = nombre;
@@ -222,29 +229,42 @@ export const updateUsuarioPost = async (req, res) => {
       updateFields.direccion_cliente = direccion;
     }
 
+    if (urlPhoto) {
+      updateFields.image = urlPhoto; 
+      const [updateImageResult] = await pool.query(
+        "UPDATE cliente SET image = ? WHERE email_cliente = ?",
+        [urlPhoto, req.userId.id]
+      );  
+      console.log(updateImageResult);
+    }
+
     if (Object.keys(updateFields).length === 0) {
-      // Verificar si no hay campos para actualizar
-      return res.status(400).json({ message: "No se proporcionaron datos para actualizar" });
+      return res
+        .status(400)
+        .json({ message: "No se proporcionaron datos para actualizar" });
     }
 
     const [rows] = await pool.query(
       "UPDATE cliente SET ? WHERE email_cliente = ?",
       [updateFields, req.userId.id]
     );
-      res.redirect("/cliente");
-      console.log(rows);
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Ha ocurrido un error" });
-    }
-  };
+      return res.status(200).send({
+        message: "Usuario actualizado correctamente",
+      })
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Error al actualizar el usuario",
+    });
+  }
+};
 
 
 //view profile
 export const viewProfileGet = async (req, res) => {
   try {
     const [rows] = await pool.query('SELECT * FROM cliente', [req.userId.id]);
-    console.log(rows);
+
     if (rows >0 ) {
       return res.state = {
         message: "Usuario no encontrado"

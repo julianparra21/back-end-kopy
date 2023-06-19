@@ -1,16 +1,17 @@
+-- SQLBook: Code
 CREATE DATABASE kopy;
 
 USE kopy;
 
-CREATE TABLE cliente (
-    id_cliente BIGINT PRIMARY KEY ,
-    nombre_cliente VARCHAR(50) NOT NULL,
-  
-    telefono_cliente BIGINT NOT NULL,
-    direccion_cliente VARCHAR(30) NOT NULL,
-    email_cliente VARCHAR(50) NOT NULL UNIQUE,
-    password_cliente VARCHAR(30) NOT NULL,
-    token_cliente VARCHAR(50)
+CREATE TABLE `cliente` (
+  `id_cliente` bigint(20) NOT NULL,
+  `nombre_cliente` varchar(50) NOT NULL,
+  `telefono_cliente` bigint(20) NOT NULL,
+  `direccion_cliente` varchar(30) NOT NULL,
+  `email_cliente` varchar(50) NOT NULL,
+  `password_cliente` varchar(30) NOT NULL,
+  `token_cliente` varchar(50) DEFAULT NULL,
+  `image` text NOT NULL
 );
 
 CREATE TABLE producto (
@@ -111,5 +112,7 @@ create table factura (
     direccion varchar(50),
     CONSTRAINT fk_id_compra FOREIGN KEY (id_compra) REFERENCES compra(id_compra)
 );
+
+
 
 -- const Hola

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import {
-  postRegistro,
+import fileUpload from "express-fileupload";
+import { postRegistro,
   LoginPost,
   LoginGet,
   RecuperarGet,
@@ -10,7 +10,7 @@ import {
   viewProfileGet,
   updateUsuarioGet,
   updateUsuarioPost,
-  eliminarCuenta
+  eliminarCuenta,
 } from "../controllers/user.controller.js";
 
 import { verifyToken } from "../controllers/validateToken.js";
@@ -29,8 +29,9 @@ router.get("/profile",verifyToken, viewProfileGet);
 router.post("/registro", postRegistro);
 router.post("/login", LoginPost);
 router.post("/recuperar", RecuperarPost);
-router.put("/updateDatos", verifyToken, updateUsuarioPost);
+router.put("/updateDatos", verifyToken,fileUpload({useTempFiles:true,tempFileDir:"./images"}),updateUsuarioPost,);
 router.post("/verificar", Verificar);
+
 
 router.delete("/eliminar/:id",eliminarCuenta, verifyToken)
 
