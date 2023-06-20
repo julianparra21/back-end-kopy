@@ -34,7 +34,6 @@ export const postRegistro = async (req, res) => {
     // const saltRounds = 10;
     // const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    console.log(nombre);
     const rows_insert = await pool.query(
       "INSERT INTO cliente (id_cliente, nombre_cliente, telefono_cliente, direccion_cliente, email_cliente, password_cliente) VALUES (?, ?, ?, ?, ?, ?)",
       [id, nombre, telefono, direccion, email, password]
@@ -213,7 +212,7 @@ export const updateUsuarioPost = async (req, res) => {
     let image = req.files ? req.files.image.tempFilePath : null;
     let img = image ? await uploadUser(image) : null;
     let urlPhoto = image && img ? img.secure_url : null;
-    console.log(req.body)
+ 
     
 
     const { nombre, telefono, direccion } = req.body;
@@ -234,7 +233,7 @@ export const updateUsuarioPost = async (req, res) => {
       const [updateImageResult] = await pool.query(
         "UPDATE cliente SET image = ? WHERE email_cliente = ?",
         [urlPhoto, req.userId.id]
-      );  
+      ); 
       console.log(updateImageResult);
     }
 

@@ -1,11 +1,11 @@
 import { Router } from "express";
-
+import fileUpload from "express-fileupload";
 import {ComprarProductoGet,ComprarProductoPost, IngresoProductoGet,ActualizarProductoGet,actualizarProducto,EliminarProductoGet,deleteProduct,IngresoProductoPost,ObtenerProductos } from "../controllers/producto.controller.js";
 
 const router = Router();
 
 router.get("/ingreso", IngresoProductoGet);
-router.post("/ingreso", IngresoProductoPost);
+router.post("/ingreso", fileUpload({useTempFiles:true,tempFileDir:"./images"}), IngresoProductoPost);
 
 router.get("/eliminar", EliminarProductoGet);
 router.delete("/eliminar/:id", deleteProduct);
