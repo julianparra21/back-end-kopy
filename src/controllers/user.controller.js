@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import { pool } from "../db.js";
 
-import {uploadUser} from  "../config-cloudinary.js";
+import { uploadUser } from "../config-cloudinary.js";
 
 import { sendEmails } from "./helpers/nodemailer.js";
 
@@ -71,14 +71,16 @@ export const LoginPost = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    
-    if (!email || !password || email.trim() === '' || password.trim() === '') {
+    if (!email || !password || email.trim() === "" || password.trim() === "") {
       return res.status(400).json({
-        message: "El email y la contraseña son campos obligatorios."
+        message: "El email y la contraseña son campos obligatorios.",
       });
     }
 
-    const [rows] = await pool.query('SELECT * FROM cliente WHERE email_cliente = ? ', [email]);
+    const [rows] = await pool.query(
+      "SELECT * FROM cliente WHERE email_cliente = ? ",
+      [email]
+    );
 
     if (rows.length > 0) {
       const storedPassword = rows[0].password_cliente;
@@ -87,7 +89,7 @@ export const LoginPost = async (req, res) => {
         const email = rows[0].email_cliente;
 
         const token = jwt.sign(
-          { email: email }, 
+          { email: email },
           process.env.SECRET || "TokenGenerate",
           { expiresIn: 60 * 60 * 24 }
         );
@@ -95,18 +97,19 @@ export const LoginPost = async (req, res) => {
         return res.status(200).json({ auth: true, token: token, email: email });
       } else {
         return res.status(401).json({
-          message: "El email o la contraseña son incorrectos"
+          message: "El email o la contraseña son incorrectos",
         });
       }
     } else {
       return res.status(401).json({
-        message: "El email o la contraseña son incorrectos"
+        message: "El email o la contraseña son incorrectos",
       });
     }
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      message: "Error al iniciar sesión. Por favor, inténtelo de nuevo más tarde."
+      message:
+        "Error al iniciar sesión. Por favor, inténtelo de nuevo más tarde.",
     });
   }
 };
@@ -212,8 +215,6 @@ export const updateUsuarioPost = async (req, res) => {
     let image = req.files ? req.files.image.tempFilePath : null;
     let img = image ? await uploadUser(image) : null;
     let urlPhoto = image && img ? img.secure_url : null;
- 
-    
 
     const { nombre, telefono, direccion } = req.body;
     const updateFields = {};
@@ -229,11 +230,11 @@ export const updateUsuarioPost = async (req, res) => {
     }
 
     if (urlPhoto) {
-      updateFields.image = urlPhoto; 
+      updateFields.image = urlPhoto;
       const [updateImageResult] = await pool.query(
         "UPDATE cliente SET image = ? WHERE email_cliente = ?",
         [urlPhoto, req.userId.id]
-      ); 
+      );
       console.log(updateImageResult);
     }
 
@@ -247,9 +248,9 @@ export const updateUsuarioPost = async (req, res) => {
       "UPDATE cliente SET ? WHERE email_cliente = ?",
       [updateFields, req.userId.id]
     );
-      return res.status(200).send({
-        message: "Usuario actualizado correctamente",
-      })
+    return res.status(200).send({
+      message: "Usuario actualizado correctamente",
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -258,39 +259,35 @@ export const updateUsuarioPost = async (req, res) => {
   }
 };
 
-
 //view profile
 export const viewProfileGet = async (req, res) => {
   try {
-    const [rows] = await pool.query('SELECT * FROM cliente', [req.userId.id]);
-
-    if (rows >0 ) {
-      return res.state = {
-        message: "Usuario no encontrado"
-
-      }
+    const [rows] = await pool.query(
+      "SELECT * FROM cliente WHERE email_cliente = ?",
+      [req.userId.id]
+    );
+    if (rows == 0) {
+      return (res.state = {
+        message: "Usuario no encontrado",
+      });
     } else {
       return res.status(200).json(rows[0]);
-
-      
     }
-
-} catch (error) {
+  } catch (error) {
     console.error(error);
-}
-}
-
+  }
+};
 
 //delete usuario
 export const eliminarCuenta = async (req, res) => {
-   
-        const { id } = req.params;
-    try {
-        const [rows] = await pool.query('DELETE FROM cliente WHERE id_cliente = ?', [id]);
-        res. status(200).json({ message: "Usuario eliminado correctamente" });
-        
-    } catch (error) {
-        console.error(error);
-    } 
-
+  const { id } = req.params;
+  try {
+    const [rows] = await pool.query(
+      "DELETE FROM cliente WHERE id_cliente = ?",
+      [id]
+    );
+    res.status(200).json({ message: "Usuario eliminado correctamente" });
+  } catch (error) {
+    console.error(error);
+  }
 };
