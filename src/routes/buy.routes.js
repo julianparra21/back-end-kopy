@@ -1,11 +1,9 @@
 import { Router } from "express";
-
-import { getBuys,createBuy } from "../controllers/buy.controller";
-
+import { buyPost, buyGet } from "../controllers/buy.controller.js";
 const router = Router();
 
-router.get("/compra", getBuys);
+router.get("/compra", buyGet);
 
+router.post("/compra", buyPost);
 
-router.post("/compra",createBuy);
-
+export default router;
