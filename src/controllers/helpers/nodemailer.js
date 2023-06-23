@@ -19,6 +19,7 @@ export function sendEmails(
   email,
   param,
   nombre,
+  amount,
   tokensEmail,
   tokenEmail,
   tokenEmails
@@ -134,13 +135,16 @@ export function sendEmails(
       .catch((err) => {
         console.log(err);
       });
+
+
+      
   }else if (param == 7) {
     transporter
     .sendMail({
       from: "kopycrazys@gmail.com",
       to: email,
-      subject: "Recuperar contraseña",
-      html:"¡Gracias por tu compra "+nombre+"! Queríamos expresar nuestro agradecimiento por elegir nuestros productos. Su pago fue de:"+precio})
+      subject: "COMPRA EXITOSA",
+      html:"¡Gracias por tu compra "+nombre+"! Queríamos expresar nuestro agradecimiento por elegir nuestros productos. Su pago fue de:"+amount})
     .then((res) => {
       console.log(res);
     })
