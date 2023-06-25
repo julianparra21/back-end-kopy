@@ -295,21 +295,55 @@ export const verificarPinGet = (req, res) => {
   
     
       
-export const asignarDomiciliarioGet = (req, res) => {
-    res.send("Asignar domiciliario")
+// export const asignarDomiciliarioGet = (req, res) => {
+//     res.send("Asignar domiciliario")
 
 
-}
+// }
 
-export const asignarDomiciliarioPost = async (req, res) => {
-    const { id_domiciliario, id_compra } = req.body;
+// export const asignarDomiciliarioPost = async (req, res) => {
+//     const { id_domiciliario, id_compra } = req.body;
+//     try {
+//         const [rows] = await pool.query(`UPDATE factura SET id_dom=? WHERE id_compra=?`, [id_domiciliario, id_compra]);
+//         res.status(200).json({ message: 'Domiciliario asignado correctamente' });
+
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({ message: 'Error al asignar domiciliario' });
+
+//     }
+// }
+
+
+export const obtenerUserInactivoGet = async (req, res) => {
     try {
-        const [rows] = await pool.query(`UPDATE factura SET id_dom=? WHERE id_compra=?`, [id_domiciliario, id_compra]);
-        res.status(200).json({ message: 'Domiciliario asignado correctamente' });
-
+      const [rows] = await pool.query('SELECT * FROM cliente WHERE habilitado = 0');
+      res.json(rows); // Enviar los datos de los usuarios inactivos en la respuesta
+      console.log(rows);
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: 'Error al asignar domiciliario' });
-
+      console.log(error);
+      res.status(500).json({ message: 'Error al obtener usuarios inactivos' });
     }
-}
+  };
+  
+
+
+
+
+
+  export const habilitarUsuario = async (req, res) => {
+    const { email } = req.body;
+    try {
+      const [rows] = await pool.query('UPDATE cliente SET habilitado = 1 WHERE email_cliente = ?', [email]);
+      if (rows.affectedRows > 0) {
+        res.status(200).json({ message: 'Usuario habilitado correctamente' });
+      } else {
+        res.status(404).json({ message: 'No se encontró ningún usuario con el correo especificado' });
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: 'Error al habilitar el usuario' });
+    }
+  }
+    
+  

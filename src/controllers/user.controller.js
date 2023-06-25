@@ -67,6 +67,53 @@ export const LoginGet = (req, res) => {
 
 //recuperar contraseña usuario
 
+// export const LoginPost = async (req, res) => {
+//   try {
+//     const { email, password } = req.body;
+
+//     if (!email || !password || email.trim() === "" || password.trim() === "") {
+//       return res.status(400).json({
+//         message: "El email y la contraseña son campos obligatorios.",
+//       });
+//     }
+
+//     const [rows] = await pool.query(
+//       "SELECT * FROM cliente WHERE email_cliente = ? ",
+//       [email]
+//     );
+
+//     if (rows.length > 0) {
+//       const storedPassword = rows[0].password_cliente;
+
+//       if (password === storedPassword) {
+//         const email = rows[0].email_cliente;
+
+//         const token = jwt.sign(
+//           { email: email },
+//           process.env.SECRET || "TokenGenerate",
+//           { expiresIn: 60 * 60 * 24 }
+//         );
+
+//         return res.status(200).json({ auth: true, token: token, email: email });
+//       } else {
+//         return res.status(401).json({
+//           message: "El email o la contraseña son incorrectos",
+//         });
+//       }
+//     } else {
+//       return res.status(401).json({
+//         message: "El email o la contraseña son incorrectos",
+//       });
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({
+//       message:
+//         "Error al iniciar sesión. Por favor, inténtelo de nuevo más tarde.",
+//     });
+//   }
+// };
+
 export const LoginPost = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -78,12 +125,13 @@ export const LoginPost = async (req, res) => {
     }
 
     const [rows] = await pool.query(
-      "SELECT * FROM cliente WHERE email_cliente = ? ",
+      "SELECT * FROM cliente WHERE email_cliente = ?",
       [email]
     );
 
     if (rows.length > 0) {
       const storedPassword = rows[0].password_cliente;
+      const isDisabled = rows[0].habilitado === 0;
 
       if (password === storedPassword) {
         const email = rows[0].email_cliente;
@@ -93,6 +141,13 @@ export const LoginPost = async (req, res) => {
           process.env.SECRET || "TokenGenerate",
           { expiresIn: 60 * 60 * 24 }
         );
+
+        if (isDisabled) {
+          // Usuario deshabilitado, devolver estado 403
+          return res.status(403).json({
+            message: "El usuario está deshabilitado. Comuníquese con el administrador.",
+          });
+        }
 
         return res.status(200).json({ auth: true, token: token, email: email });
       } else {
@@ -108,11 +163,11 @@ export const LoginPost = async (req, res) => {
   } catch (error) {
     console.error(error);
     return res.status(500).json({
-      message:
-        "Error al iniciar sesión. Por favor, inténtelo de nuevo más tarde.",
+      message: "Error al iniciar sesión. Por favor, inténtelo de nuevo más tarde.",
     });
   }
 };
+
 
 export const RecuperarGet = (req, res) => {
   res.send("Recuperar contraseña");
@@ -283,11 +338,12 @@ export const eliminarCuenta = async (req, res) => {
   const { id } = req.params;
   try {
     const [rows] = await pool.query(
-      "DELETE FROM cliente WHERE id_cliente = ?",
+      "UPDATE cliente SET habilitado = 0 WHERE id_cliente = ?",
       [id]
     );
-    res.status(200).json({ message: "Usuario eliminado correctamente" });
+    res.status(200).json({ message: "Usuario deshabilitado correctamente" });
   } catch (error) {
     console.error(error);
   }
 };
+
