@@ -22,7 +22,7 @@ const stripe=new Stripe ("sk_test_51MyDPuD7xwBecERvs5KLjTQJdhDvdJeCoDTTZRrLRvIl1
     });
     console.log(payment);
     console.log({ message: "Succesfull payment" });
-    await EmailSend(email, 7, nombre, cc, amount);
+    await EmailSend(email, 7, nombre, amount, cc);
   } catch (error) {
     console.log(error);
     res.json({ message: "error" });
