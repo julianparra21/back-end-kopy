@@ -10,7 +10,7 @@ CREATE TABLE cliente (
     email_cliente VARCHAR(50) NOT NULL UNIQUE,
     password_cliente VARCHAR(30) NOT NULL,
     token_cliente VARCHAR(50),
-    image text NOT NULL,
+    image text,
     habilitado INTEGER NOT NULL DEFAULT 1
 );
 

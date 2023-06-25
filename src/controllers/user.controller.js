@@ -265,11 +265,69 @@ export const updateUsuarioGet = async (req, res) => {
   }
 };
 
+// export const updateUsuarioPost = async (req, res) => {
+//   try {
+//     let image = req.files ? req.files.image.tempFilePath : null;
+//     let img = image ? await uploadUser(image) : null;
+//     let urlPhoto = image && img ? img.secure_url : null;
+
+//     const { nombre, telefono, direccion } = req.body;
+//     const updateFields = {};
+
+//     if (nombre) {
+//       updateFields.nombre_cliente = nombre;
+//     }
+//     if (telefono) {
+//       updateFields.telefono_cliente = telefono;
+//     }
+//     if (direccion) {
+//       updateFields.direccion_cliente = direccion;
+//     }
+
+//     if (urlPhoto) {
+//       updateFields.image = urlPhoto;
+//       const [updateImageResult] = await pool.query(
+//         "UPDATE cliente SET image = ? WHERE email_cliente = ?",
+//         [urlPhoto, req.userId.id]
+//       );
+//       console.log(updateImageResult);
+//     }
+
+//     if (Object.keys(updateFields).length === 0) {
+//       return res
+//         .status(400)
+//         .json({ message: "No se proporcionaron datos para actualizar" });
+//     }
+
+//     const [rows] = await pool.query(
+//       "UPDATE cliente SET ? WHERE email_cliente = ?",
+//       [updateFields, req.userId.id]
+//     );
+//     return res.status(200).send({
+//       message: "Usuario actualizado correctamente",
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({
+//       message: "Error al actualizar el usuario",
+//     });
+//   }
+// };
+
 export const updateUsuarioPost = async (req, res) => {
   try {
     let image = req.files ? req.files.image.tempFilePath : null;
-    let img = image ? await uploadUser(image) : null;
-    let urlPhoto = image && img ? img.secure_url : null;
+    let urlPhoto = null;
+
+    if (image) {
+      const img = await uploadUser(image);
+      urlPhoto = img.secure_url;
+      const updateImageResult = await pool.query(
+        "UPDATE cliente SET image = ? WHERE email_cliente = ?",
+        [urlPhoto, req.userId.id]
+      );
+      console.log(updateImageResult);
+    }
 
     const { nombre, telefono, direccion } = req.body;
     const updateFields = {};
@@ -284,26 +342,22 @@ export const updateUsuarioPost = async (req, res) => {
       updateFields.direccion_cliente = direccion;
     }
 
-    if (urlPhoto) {
-      updateFields.image = urlPhoto;
-      const [updateImageResult] = await pool.query(
-        "UPDATE cliente SET image = ? WHERE email_cliente = ?",
-        [urlPhoto, req.userId.id]
-      );
-      console.log(updateImageResult);
-    }
-
     if (Object.keys(updateFields).length === 0) {
       return res
         .status(400)
         .json({ message: "No se proporcionaron datos para actualizar" });
     }
 
-    const [rows] = await pool.query(
+    const updateResult = await pool.query(
       "UPDATE cliente SET ? WHERE email_cliente = ?",
       [updateFields, req.userId.id]
     );
-    return res.status(200).send({
+
+    if (updateResult.affectedRows === 0) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    return res.status(200).json({
       message: "Usuario actualizado correctamente",
     });
   } catch (error) {
@@ -313,6 +367,7 @@ export const updateUsuarioPost = async (req, res) => {
     });
   }
 };
+
 
 //view profile
 export const viewProfileGet = async (req, res) => {
