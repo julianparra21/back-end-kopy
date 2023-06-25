@@ -318,7 +318,7 @@ export const verificarPinGet = (req, res) => {
 export const obtenerUserInactivoGet = async (req, res) => {
     try {
       const [rows] = await pool.query('SELECT * FROM cliente WHERE habilitado = 0');
-      res.json(rows); // Enviar los datos de los usuarios inactivos en la respuesta
+      res.json(rows);
       console.log(rows);
     } catch (error) {
       console.log(error);

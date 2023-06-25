@@ -143,7 +143,7 @@ export const LoginPost = async (req, res) => {
         );
 
         if (isDisabled) {
-          // Usuario deshabilitado, devolver estado 403
+         
           return res.status(403).json({
             message: "El usuario está deshabilitado. Comuníquese con el administrador.",
           });
